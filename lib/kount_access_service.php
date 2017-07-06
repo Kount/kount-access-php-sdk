@@ -36,12 +36,10 @@ class Kount_Access_Service {
     /**
      * Constructor
      *
-     * @param int merchant_id The Merchant's ID
-     * @param string api_key API key assigned to merchant
-     * @param string server_name The DNS name for the Kount Access API Server
-     * @param string version The version of the API to access (0200 is the
-     *                       default for this release of the SDK)
-     * @return this
+     * @param int $merchant_id The Merchant's ID
+     * @param string $api_key API key assigned to merchant
+     * @param string $server_name The DNS name for the Kount Access API Server
+     * @param string $version The version of the API to access (0200 is the default for this release of the SDK).
      */
     public function __construct ($merchant_id, $api_key, $server_name, $version = '0200') {
         $this->__server_name = $server_name;
@@ -112,50 +110,6 @@ class Kount_Access_Service {
           );
         return $this->__call_endpoint($endpoint, "POST", $data);
     } //end get_decision
-
-    /**
-     * Gets Help information for the get_decision endpoint by version.
-     *
-     * @param string version Version to get help for (defaults to 0200)
-     * @return string HTML Help information, or a JSON array with error information
-     */
-    public function get_decision_help ($version = '0200') {
-        $version = urlencode($version);
-        $endpoint = "https://$this->__server_name/api/decision";
-        $data = array (
-            v => $version,
-            help => "true",
-          );
-        return $this->__call_endpoint($endpoint, 'POST', $data, true);
-    }
-
-    /**
-     * Gets Help information for the get_device endpoint by version.
-     *
-     * @param string version Version to get help for (defaults to 0200)
-     * @return string HTML Help information, or a JSON array with error information
-     */
-    public function get_device_help ($version = '0200') {
-        $version = urlencode($version);
-        $endpoint = "https://$this->__server_name/api/device?v=$version&help=true";
-        return $this->__call_endpoint($endpoint, 'GET', null, true);
-    }
-
-    /**
-     * Gets Help information for the get_device endpoint by version.
-     *
-     * @param string version Version to get help for (defaults to 0200)
-     * @return string HTML help information, or a JSON array with error information
-     */
-    public function get_velocity_help ($version = '0200') {
-        $version = urlencode($version);
-        $endpoint = "https://$this->__server_name/api/velocity";
-        $data = array (
-            v => $version,
-            help => "true",
-          );
-        return $this->__call_endpoint($endpoint, 'POST', $data, true);
-    }
 
     /**
      * Call a service endpoint.

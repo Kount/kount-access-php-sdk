@@ -4,14 +4,14 @@
  * from the kount_access_service.php class.
  * @copyright 2015 Kount, Inc. All Rights Reserved.
  */
-require_once('./kount_access_service.php');
+require_once('../lib/kount_access_service.php');
 
 /**
  * The Kount_Access_Service can be set up once and then used multiple times
  * concurrently as needed. In this example we are creating it once and
  * passing it into all the example functions.  If you are just implementing 1
  * function, you can use this part and the function together. This just
- * makes the sample easier to manage as your credentials and servername are
+ * makes the sample easier to manage as your credentials and server name are
  * in a single location.
  */
 $main = function ($argc, $argv) {
@@ -94,48 +94,10 @@ $main = function ($argc, $argv) {
     $response = $kount_access->get_decision($session_id, $user, $password);
     evaluate_response($response);
     wait_on_user();
-
-    ///////////////////////////////////////////////////////////////////////////
-    // If you want to know about a different version of the endpoints or what
-    // the data within the json responses mean, you can call the help
-    // functions in the service. The following three examples print out the
-    // HTML help content from the server based on the version passed in.
-    ///////////////////////////////////////////////////////////////////////////
-    echo "Example of decision help: kount_access->get_decision_help()\n";
-    print_help($kount_access->get_decision_help());
-    wait_on_user();
-
-    echo "Example of decision help: kount_access->get_device_help()\n";
-    print_help($kount_access->get_device_help());
-    wait_on_user();
-
-    ///////////////////////////////////////////////////////////////////////////
-    // If you want to see a different versioni's help, then specify the version
-    // in the input of the function
-    ///////////////////////////////////////////////////////////////////////////
-    echo "Example of passing a different version into help: kount_access->get_device_help('0103')\n";
-    print_help($kount_access->get_velocity_help("0103"));
-    wait_on_user();
-
-    ///////////////////////////////////////////////////////////////////////////
-    // If you specify an invalid version you will get a 400 server error
-    ///////////////////////////////////////////////////////////////////////////
-    echo "Example of passing a bad version into help: kount_access->get_device_help('ver 1.0')\n";
-    evaluate_response($kount_access->get_device_help("ver 1.0"));
 };
 
-function print_help ($response) {
-    if (is_array($response)) {
-        evaluate_response($response);
-    } else {
-        echo "//////////////START RESPONSE//////////////////////\n";
-        echo $response;
-        echo "////////////////END RESPONSE//////////////////////\n";
-    }
-}
-
 /**
- * Simple evaluator that either prints the errors, or the assoiative array
+ * Simple evaluator that either prints the errors, or the associative array
  * result
  */
 function evaluate_response ($response) {

@@ -114,50 +114,6 @@ class Kount_Access_Service {
     } //end get_decision
 
     /**
-     * Gets Help information for the get_decision endpoint by version.
-     *
-     * @param string version Version to get help for (defaults to 0200)
-     * @return string HTML Help information, or a JSON array with error information
-     */
-    public function get_decision_help ($version = '0200') {
-        $version = urlencode($version);
-        $endpoint = "https://$this->__server_name/api/decision";
-        $data = array (
-            v => $version,
-            help => "true",
-          );
-        return $this->__call_endpoint($endpoint, 'POST', $data, true);
-    }
-
-    /**
-     * Gets Help information for the get_device endpoint by version.
-     *
-     * @param string version Version to get help for (defaults to 0200)
-     * @return string HTML Help information, or a JSON array with error information
-     */
-    public function get_device_help ($version = '0200') {
-        $version = urlencode($version);
-        $endpoint = "https://$this->__server_name/api/device?v=$version&help=true";
-        return $this->__call_endpoint($endpoint, 'GET', null, true);
-    }
-
-    /**
-     * Gets Help information for the get_device endpoint by version.
-     *
-     * @param string version Version to get help for (defaults to 0200)
-     * @return string HTML help information, or a JSON array with error information
-     */
-    public function get_velocity_help ($version = '0200') {
-        $version = urlencode($version);
-        $endpoint = "https://$this->__server_name/api/velocity";
-        $data = array (
-            v => $version,
-            help => "true",
-          );
-        return $this->__call_endpoint($endpoint, 'POST', $data, true);
-    }
-
-    /**
      * Call a service endpoint.
      *
      * @param string $endpoint URL to endpoint

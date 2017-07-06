@@ -11,7 +11,7 @@ require_once('../lib/kount_access_service.php');
  * concurrently as needed. In this example we are creating it once and
  * passing it into all the example functions.  If you are just implementing 1
  * function, you can use this part and the function together. This just
- * makes the sample easier to manage as your credentials and servername are
+ * makes the sample easier to manage as your credentials and server name are
  * in a single location.
  */
 $main = function ($argc, $argv) {
@@ -96,18 +96,8 @@ $main = function ($argc, $argv) {
     wait_on_user();
 };
 
-function print_help ($response) {
-    if (is_array($response)) {
-        evaluate_response($response);
-    } else {
-        echo "//////////////START RESPONSE//////////////////////\n";
-        echo $response;
-        echo "////////////////END RESPONSE//////////////////////\n";
-    }
-}
-
 /**
- * Simple evaluator that either prints the errors, or the assoiative array
+ * Simple evaluator that either prints the errors, or the associative array
  * result
  */
 function evaluate_response ($response) {

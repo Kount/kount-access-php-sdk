@@ -47,17 +47,17 @@ class Kount_Access_Service
   public function __construct($merchant_id, $api_key, $server_name, $version = '0200')
   {
 
-    if (is_null($server_name) || is_null($server_name)) {
+    if (is_null($server_name) || isset($server_name)) {
       throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Missing host.");
     }
 
-    if (is_null($merchant_id) || is_null($merchant_id)) {
+    if (is_null($merchant_id) || isset($merchant_id)) {
       throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Missing merchantId.");
     } else if($merchant_id < 99999 || $merchant_id > 1000000) {
       throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Invalid merchantId.");
     }
 
-    if (is_null($api_key) || is_null($api_key)) {
+    if (is_null($api_key) || isset($api_key)) {
       throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Missing apiKey.");
     }
 

@@ -105,4 +105,18 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
       $this->assertEquals(Kount_Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
     }
   }
+
+  public function testAccessInitBlankApiKey() {
+    try {
+      $kount_access = new Kount_Access_Service(self::merchantId, " ", self::host, self::version);
+      $this->fail("Should have failed apiKey");
+    } catch (Kount_Access_Exception $ae) {
+      $this->assertEquals(Kount_Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
+    }
+  }
+
+  public function testGetDevice() {
+    // Unit test that will mock the abstracted curl class.
+
+  }
 }

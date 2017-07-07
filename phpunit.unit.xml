@@ -5,13 +5,13 @@
 
   <testsuites>
     <testsuite name="unit">
-      <directory suffix=".php">./tests/Kount/Ris/unit/</directory>
+      <directory suffix=".php">./tests/kount/kountaccess/unit/</directory>
     </testsuite>
   </testsuites>
 
   <filter>
     <whitelist>
-      <directory suffix=".php">./src/Kount/</directory>
+      <directory suffix=".php">./lib/</directory>
       <exclude>
       </exclude>
     </whitelist>

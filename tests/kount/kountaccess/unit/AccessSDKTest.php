@@ -20,7 +20,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
   const responseId  = "bf10cd20cf61286669e87342d029e405";
   const decision    = "A";
 
-  const deviseJSON   = "{" . "    \"device\": {" . "        \"id\": \"" . self::fingerprint . "\", "
+  const deviceJSON   = "{" . "    \"device\": {" . "        \"id\": \"" . self::fingerprint . "\", "
   . "        \"ipAddress\": \"" . self::ipAddress . "\", " . "        \"ipGeo\": \"" . self::ipGeo . "\", "
   . "        \"mobile\": 1, " . "        \"proxy\": 0" . "    }," . "    \"response_id\": \"" . self::responseId
   . "\"" . "}";
@@ -50,7 +50,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
                            . "           \"ruleEvents\": {" . "               \"decision\": \"" . self::decision . "\","
                            . "               \"ruleEvents\": []," . "               \"total\": 0" . "           }" . "       },"
                            . "       \"warnings\": []" . "   }," . "    \"device\": {" . "        \"id\": \"" . self::fingerprint . "\", "
-                           . "        \"ipAddress\": \"" . self::ipAddress . "\", " . "   l     \"ipGeo\": \"" . self::ipGeo . "\", "
+                           . "        \"ipAddress\": \"" . self::ipAddress . "\", " . "       \"ipGeo\": \"" . self::ipGeo . "\", "
                            . "        \"mobile\": 1, " . "        \"proxy\": 0" . "    }, " . "    \"response_id\": \"" . self::responseId
                            . "\", " . "    \"velocity\": {" . "        \"account\": {" . "            \"dlh\": 1, "
                            . "            \"dlm\": 1, " . "            \"iplh\": 1, " . "            \"iplm\": 1, "
@@ -116,7 +116,99 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetDevice() {
-    // Unit test that will mock the abstracted curl class.
+    $mock = $this->getMockBuilder(Kount_access_curl_service::class)
+                 ->setConstructorArgs(array(self::merchantId, self::apiKey))
+                 ->setMethods(['__call_endpoint'])
+                 ->getMock();
 
+    $mock->expects($this->any())
+         ->method('__call_endpoint')
+         ->will($this->returnValue(self::deviceJSON));
+
+    $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
+
+    $deviceInfo = $kount_access->get_device(self::sessionId);
+    $this->assertNotNull($deviceInfo);
+
+    $deviceInfoDecoded = json_decode($deviceInfo, true);
+
+    $this->assertEquals(self::fingerprint, $deviceInfoDecoded['device']['id']);
+    $this->assertEquals(self::ipAddress, $deviceInfoDecoded['device']['ipAddress']);
+    $this->assertEquals(self::ipGeo, $deviceInfoDecoded['device']['ipGeo']);
+    $this->assertEquals(1, $deviceInfoDecoded['device']['mobile']);
+    $this->assertEquals(0, $deviceInfoDecoded['device']['proxy']);
+    $this->assertEquals(self::responseId, $deviceInfoDecoded['response_id']);
+  }
+
+  public function testGetVelocity() {
+    $mock = $this->getMockBuilder(Kount_access_curl_service::class)
+                 ->setConstructorArgs(array(self::merchantId, self::apiKey))
+                 ->setMethods(['__call_endpoint'])
+                 ->getMock();
+
+    $mock->expects($this->any())
+         ->method('__call_endpoint')
+         ->will($this->returnValue(self::velocityJSON));
+
+    $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
+
+    $velocity = $kount_access->get_velocity(self::sessionId, self::user, self::password);
+    $this->assertNotNull($velocity);
+
+    $velocityInfo = json_decode($velocity, true);
+    $device = $velocityInfo['device'];
+
+    $this->assertEquals(self::fingerprint, $device['id']);
+    $this->assertEquals(self::ipAddress, $device['ipAddress']);
+    $this->assertEquals(self::ipGeo, $device['ipGeo']);
+    $this->assertEquals(1, $device['mobile']);
+    $this->assertEquals(0, $device['proxy']);
+    $this->assertEquals(self::responseId, $velocityInfo['response_id']);
+
+    $this->assertNotNull($velocityInfo['velocity']);
+
+    $velocityJson = json_decode(self::velocityJSON, true);
+
+    $this->assertEquals($velocityJson['velocity']['account'], $velocityInfo['velocity']['account']);
+    $this->assertEquals($velocityJson['velocity']['device'], $velocityInfo['velocity']['device']);
+    $this->assertEquals($velocityJson['velocity']['ip_address'], $velocityInfo['velocity']['ip_address']);
+    $this->assertEquals($velocityJson['velocity']['password'], $velocityInfo['velocity']['password']);
+    $this->assertEquals($velocityJson['velocity']['user'], $velocityInfo['velocity']['user']);
+  }
+
+  public function testGetDecision() {
+    $mock = $this->getMockBuilder(Kount_access_curl_service::class)
+                 ->setConstructorArgs(array(self::merchantId, self::apiKey))
+                 ->setMethods(['__call_endpoint'])
+                 ->getMock();
+
+    $mock->expects($this->any())
+         ->method('__call_endpoint')
+         ->will($this->returnValue(self::decisionJSON));
+
+    $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
+
+    $decision = $kount_access->get_decision(self::sessionId, self::user, self::password);
+    $this->assertNotNull($decision);
+
+    $decisionInfo = json_decode($decision, true);
+    $device = $decisionInfo['device'];
+
+    $this->assertEquals(self::fingerprint, $device['id']);
+    $this->assertEquals(self::ipAddress, $device['ipAddress']);
+    $this->assertEquals(self::ipGeo, $device['ipGeo']);
+    $this->assertEquals(1, $device['mobile']);
+    $this->assertEquals(0, $device['proxy']);
+    $this->assertEquals(self::responseId, $decisionInfo['response_id']);
+
+    $this->assertNotNull($decisionInfo['velocity']);
+
+    $decisionJson = json_decode(self::decisionJSON, true);
+
+    $this->assertEquals($decisionJson['velocity']['account'], $decisionInfo['velocity']['account']);
+    $this->assertEquals($decisionJson['velocity']['device'], $decisionInfo['velocity']['device']);
+    $this->assertEquals($decisionJson['velocity']['ip_address'], $decisionInfo['velocity']['ip_address']);
+    $this->assertEquals($decisionJson['velocity']['password'], $decisionInfo['velocity']['password']);
+    $this->assertEquals($decisionJson['velocity']['user'], $decisionInfo['velocity']['user']);
   }
 }

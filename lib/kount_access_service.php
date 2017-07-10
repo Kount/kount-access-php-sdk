@@ -1,5 +1,8 @@
 <?php
 
+require __DIR__ . '/./kount_access_exception.php';
+require __DIR__ . '/./kount_access_curl_service.php';
+
 /**
  * Service API access class.
  * This class provides helper functions to utilize the Kount Access API
@@ -14,7 +17,7 @@
  *
  * See the reference_implementation.php for sample usage.
  *
- * @version 2.0.0
+ * @version 2.1.0
  * @copyright 2015 Kount, Inc. All Rights Reserved.
  */
 class Kount_Access_Service
@@ -31,9 +34,9 @@ class Kount_Access_Service
   private $__server_name;
 
   /**
-   * Options for curl call
+   * Variable instance for creating kount_access_curl_service
    */
-  private $__encoded_credentials;
+  private $__curl_service;
 
   /**
    * Constructor
@@ -42,27 +45,31 @@ class Kount_Access_Service
    * @param string $api_key API key assigned to merchant
    * @param string $server_name The DNS name for the Kount Access API Server
    * @param string $version The version of the API to access (0200 is the default for this release of the SDK).
+   * @param class kount_access_curl_service instance
    * @throws Kount_Access_Exception Thrown if any of the values are invalid.
    */
-  public function __construct($merchant_id, $api_key, $server_name, $version = '0200')
+  public function __construct($merchant_id, $api_key, $server_name, $version = '0200', $__curl_service = null)
   {
-
-    if (is_null($server_name) || isset($server_name)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Missing host.");
+    if (is_null($server_name) || !isset($server_name)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Missing host.");
     }
 
-    if (is_null($merchant_id) || isset($merchant_id)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Missing merchantId.");
+    if (is_null($merchant_id) || !isset($merchant_id)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Missing merchantId.");
     } else if($merchant_id < 99999 || $merchant_id > 1000000) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Invalid merchantId.");
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid merchantId.");
     }
 
-    if (is_null($api_key) || isset($api_key)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Missing apiKey.");
+    if (is_null($api_key) || trim($api_key) == '') {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Missing apiKey.");
     }
 
+    if($__curl_service == null) {
+      $this->__curl_service = new Kount_access_curl_service($merchant_id, $api_key);
+    }
+
+    $this->__curl_service = $__curl_service;
     $this->__server_name = $server_name;
-    $this->__encoded_credentials = base64_encode($merchant_id . ":" . $api_key);
     $this->__version = $version;
   } //end __construct
 
@@ -75,7 +82,7 @@ class Kount_Access_Service
   public function get_device($session_id)
   {
     $endpoint = "https://$this->__server_name/api/device?v=$this->__version&s=$session_id";
-    return $this->__call_endpoint($endpoint, "GET", null);
+    return $this->__curl_service->__call_endpoint($endpoint, "GET", null);
   } //end get_device
 
 
@@ -96,14 +103,14 @@ class Kount_Access_Service
     $p = hash('sha256', $password);
     $a = hash('sha256', $user_id . ":" . $password);
     $data = array(
-      s => $session_id,
-      v => $this->__version,
-      uh => $u,
-      ph => $p,
-      ah => $a
+      "s" => $session_id,
+      "v" => $this->__version,
+      "uh" => $u,
+      "ph" => $p,
+      "ah" => $a
     );
 
-    return $this->__call_endpoint($endpoint, "POST", $data);
+    return $this->__curl_service->__call_endpoint($endpoint, "POST", $data);
   } //end get_velocity
 
   /**
@@ -124,87 +131,14 @@ class Kount_Access_Service
     $p = hash('sha256', $password);
     $a = hash('sha256', $user_id . ":" . $password);
     $data = array(
-      s => $session_id,
-      v => $this->__version,
-      uh => $u,
-      ph => $p,
-      ah => $a
+      "s" => $session_id,
+      "v" => $this->__version,
+      "uh" => $u,
+      "ph" => $p,
+      "ah" => $a
     );
-    return $this->__call_endpoint($endpoint, "POST", $data);
+    return $this->__curl_service->__call_endpoint($endpoint, "POST", $data);
   } //end get_decision
 
-  /**
-   * Call a service endpoint.
-   *
-   * @param string $endpoint URL to endpoint
-   * @param string $method Either POST or GET
-   * @param array $params POST parameters
-   * @return array JSON Response decoded or error array with cURL's
-   *               ERROR_CODE and ERROR_MESSAGE values
-   */
-  private function __call_endpoint($endpoint, $method = null, $params = null, $help = null)
-  {
-    $options = array(
-      CURLOPT_FAILONERROR => false,
-      CURLOPT_USERAGENT =>
-        'Mozilla/5.0 (compatible; Service_Client/$Revision: 22622 $;)',
-      CURLOPT_COOKIESESSION => true,
-      CURLOPT_HTTPHEADER => array(
-        "Accept: text/json",
-        "Authorization: Basic $this->__encoded_credentials",
-      ),
-      CURLOPT_CONNECTTIMEOUT => 3, // 3 seconds
-      CURLOPT_TIMEOUT => 5, // 5 seconds
-      CURLOPT_HEADER => true,
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_URL => $endpoint,
-    );
-    if ("POST" == $method) {
-      $options[CURLOPT_POST] = true;
-      $options[CURLOPT_POSTFIELDS] = $params;
-    } else {
-      $options[CURLOPT_CUSTOMREQUEST] = $method;
-    }
-
-    // Create curl resource
-    $ch = curl_init();
-    //Set Curl options
-    curl_setopt_array($ch, $options);
-    // Execute the request
-    $raw_resp = curl_exec($ch);
-
-    //Parse the response
-    $err_code = curl_errno($ch);
-    $resp_body = "";
-
-    if (CURLE_OK == $err_code) {
-      // parse the raw response
-      $info = curl_getinfo($ch);
-      $resp_code = (int)$info['http_code'];
-      $hdr_size = $info['header_size'];
-      $msg = mb_substr($raw_resp, $hdr_size,
-        mb_strlen($raw_resp, 'latin1'), 'latin1');
-      if (200 != $resp_code) {
-        $resp_body = array(
-          ERROR_CODE => $resp_code,
-          ERROR_MESSAGE => $msg,
-        );
-      } else {
-        if ($help) {
-          $resp_body = $msg;
-        } else {
-          $resp_body = json_decode($msg, true);
-        }
-      }
-    } else {
-      $resp_body = array(
-        ERROR_CODE => $err_code,
-        ERROR_MESSAGE => curl_error($ch),
-      );
-    }
-
-    curl_close($ch);
-    return $resp_body;
-  } //end call_endpoint
 } //end kount_access_api
 

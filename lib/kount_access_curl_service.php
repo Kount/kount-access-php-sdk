@@ -37,6 +37,7 @@ class Kount_access_curl_service
    * @param string $endpoint URL to endpoint
    * @param string $method Either POST or GET
    * @param array $params POST parameters
+   * @throws Kount_Access_Exception::NETWORK_ERROR if there is a problem with the curl call
    * @return array JSON Response decoded or error array with cURL's
    *               ERROR_CODE and ERROR_MESSAGE values
    */
@@ -87,6 +88,7 @@ class Kount_access_curl_service
           ERROR_CODE => $resp_code,
           ERROR_MESSAGE => $msg,
         );
+        throw new Kount_Access_Exception(Kount_Access_Exception::NETWORK_ERROR, "Bad Response(" . $resp_code . ") " . $msg);
       } else {
         $resp_body = json_decode($msg, true);
       }
@@ -95,6 +97,7 @@ class Kount_access_curl_service
         ERROR_CODE => $err_code,
         ERROR_MESSAGE => curl_error($ch),
       );
+      throw new Kount_Access_Exception(Kount_Access_Exception::NETWORK_ERROR, "Bad Response(" . $err_code . ") " . curl_error($ch));
     }
 
     curl_close($ch);

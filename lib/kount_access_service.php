@@ -48,7 +48,7 @@ class Kount_Access_Service
    * @param class kount_access_curl_service instance
    * @throws Kount_Access_Exception Thrown if any of the values are invalid.
    */
-  public function __construct($merchant_id, $api_key, $server_name, $version = '0200', $__curl_service = null)
+  public function __construct($merchant_id, $api_key, $server_name, $version = '0210', $__curl_service = null)
   {
     if (is_null($server_name) || !isset($server_name)) {
       throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Missing host.");
@@ -77,10 +77,15 @@ class Kount_Access_Service
    * Gets the information for the Device based on the Session ID.
    *
    * @param string $session_id The Session ID used by the Device
+   * @throws Kount_Access_Exception if session id is missing, null or wrong length
    * @return array from JSON object decoded with details about the Device.
    */
   public function get_device($session_id)
   {
+    if(is_null($session_id) || empty($session_id) || sizeof($session_id) > 32) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Invalid session id.");
+    }
+
     $endpoint = "https://$this->__server_name/api/device?v=$this->__version&s=$session_id";
     return $this->__curl_service->__call_endpoint($endpoint, "GET", null);
   } //end get_device
@@ -94,10 +99,23 @@ class Kount_Access_Service
    * @param string $session_id The Session ID used by the Device
    * @param string $user_id The user's User ID
    * @param string $password The user's Password
+   * @throws Kount_Access_Exception thrown if session id, user id or password are invalid
    * @return array from JSON object decoded with details about the Device.
    */
   public function get_velocity($session_id, $user_id, $password)
   {
+    if(is_null($session_id) || empty($session_id) || sizeof($session_id) > 32) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid session id.");
+    }
+
+    if(is_null($user_id) || empty($user_id)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid user id.");
+    }
+
+    if(is_null($password) || empty($password)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid password id.");
+    }
+
     $endpoint = "https://$this->__server_name/api/velocity";
     $u = hash('sha256', $user_id);
     $p = hash('sha256', $password);
@@ -122,10 +140,23 @@ class Kount_Access_Service
    * @param string $session_id The Session ID used by the Device
    * @param string $user_id The user's User ID
    * @param string $password The user's Password
+   * @throws Kount_Access_Exception thrown if session id, user id or password are invalid
    * @return array from JSON object decoded with details about the Device.
    */
   public function get_decision($session_id, $user_id, $password)
   {
+    if(is_null($session_id) || empty($session_id) || sizeof($session_id) > 32) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid session id.");
+    }
+
+    if(is_null($user_id) || empty($user_id)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid user id.");
+    }
+
+    if(is_null($password) || empty($password)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid password id.");
+    }
+
     $endpoint = "https://$this->__server_name/api/decision";
     $u = hash('sha256', $user_id);
     $p = hash('sha256', $password);

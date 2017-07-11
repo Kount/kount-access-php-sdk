@@ -1,0 +1,19 @@
+<phpunit bootstrap="tests/bootstrap.php"
+         colors="true"
+         processIsolation="false"
+         syntaxCheck="false">
+
+  <testsuites>
+    <testsuite name="unit">
+      <directory suffix=".php">./tests/kount/kountaccess/unit/</directory>
+    </testsuite>
+  </testsuites>
+
+  <filter>
+    <whitelist>
+      <directory suffix=".php">./lib/</directory>
+      <exclude>
+      </exclude>
+    </whitelist>
+  </filter>
+</phpunit>

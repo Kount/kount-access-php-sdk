@@ -4,7 +4,7 @@
  * from the kount_access_service.php class.
  * @copyright 2015 Kount, Inc. All Rights Reserved.
  */
-require_once('../lib/kount_access_service.php');
+require __DIR__ . "/../lib/kount_access_service.php";
 
 /**
  * The Kount_Access_Service can be set up once and then used multiple times

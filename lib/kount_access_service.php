@@ -68,7 +68,6 @@ class Kount_Access_Service
       $this->__curl_service = new Kount_access_curl_service($merchant_id, $api_key);
     }
 
-    $this->__curl_service = $__curl_service;
     $this->__server_name = $server_name;
     $this->__version = $version;
   } //end __construct

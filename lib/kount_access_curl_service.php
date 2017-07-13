@@ -19,6 +19,18 @@ class Kount_access_curl_service
   private $__encoded_credentials;
 
   /**
+   * Possible error code.
+   * @var string
+   */
+  private $errorCode;
+
+  /**
+   * Possible error code.
+   * @var string
+   */
+  private $errorMsg;
+
+  /**
    * Kount_access_curl_service constructor.
    *
    * Initializes __encoded_credentials variable used in curl call.
@@ -85,8 +97,8 @@ class Kount_access_curl_service
         mb_strlen($raw_resp, 'latin1'), 'latin1');
       if (200 != $resp_code) {
         $resp_body = array(
-          ERROR_CODE => $resp_code,
-          ERROR_MESSAGE => $msg,
+          $this->errorCode => $resp_code,
+          $this->errorMsg => $msg,
         );
         throw new Kount_Access_Exception(Kount_Access_Exception::NETWORK_ERROR, "Bad Response(" . $resp_code . ") " . $msg);
       } else {
@@ -94,8 +106,8 @@ class Kount_access_curl_service
       }
     } else {
       $resp_body = array(
-        ERROR_CODE => $err_code,
-        ERROR_MESSAGE => curl_error($ch),
+        $this->errorCode => $err_code,
+        $this->errorMsg => curl_error($ch),
       );
       throw new Kount_Access_Exception(Kount_Access_Exception::NETWORK_ERROR, "Bad Response(" . $err_code . ") " . curl_error($ch));
     }

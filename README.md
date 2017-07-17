@@ -51,7 +51,7 @@ Then create an instance of the Library interface:
     
     
 
-###get_device
+### get_device
 
 If you are just looking for information about the device (like the
 device id, or pierced IP Address) The use the getDevice() function.
@@ -86,7 +86,7 @@ Sample Response:
 For more information about the fields in the request or response, please see
 the API Documentation for the Version you are interested in.
 
-###get_velocity
+### get_velocity
 if you want to know about the velocity of your users or devices as it pertains
 to other data points, you would want to call getVelocity().  This allows you to
 see the relationships between the following pieces of information over a period
@@ -123,7 +123,7 @@ Sample Response:
 For more information about the fields in the request or response, please see
 the API Documentation for the Version you are interested in.
 
-###get_decision
+### get_decision
 If you want Kount Access to evaluate possible threats using our
 Thresholds Engine, you will want to call the getDecision endpoint.
 This example shows how to call the decision call and what it would look

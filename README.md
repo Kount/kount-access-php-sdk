@@ -12,7 +12,7 @@ This library allows you to connect to the Kount Access API services and get info
 Usage
 -----
 In order to use the API service to evaluate your transaction, you will need to
-have the Data Collecter already setup and installed in your login page.  Once
+have the Data Collector already setup and installed in your login page.  Once
 this has been done, and you have access to the information on the login page
 you can make API service calls via this library to evaluate the login attempt.
 
@@ -39,7 +39,7 @@ In your application it should look something like this:
     $merchant_id = 123456
     $api_key = 'YOUR-API-KEY-GOES-HERE'
     $server_name = 'someserver.kountaccess.com'
-    $version = '0200' //Optional, if ommitted it defaults to '0200'
+    $version = '0210' //Optional, if ommitted it defaults to '0210'
 
 Then create an instance of the Library interface:
 

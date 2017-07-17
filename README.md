@@ -44,6 +44,12 @@ In your application it should look something like this:
 Then create an instance of the Library interface:
 
     $kount_access = new Kount_Access_Service($merchant_id, $api_key, $server_name, $version);
+    
+**Important Note :** The kount_access_php_sdk expects a sessionId with a length of 32 characters.
+ The default value set in php's settings (php.ini) is 26 characters. You'll need to set the "session.sid_length" key to a value of 32,
+ that will prompt session_id() to create sessions strings with a length of 32 characters.   
+    
+    
 
 ###get_device
 

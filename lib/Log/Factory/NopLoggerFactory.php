@@ -1,4 +1,5 @@
 <?php
+
 /**
  * NopLoggerFactory.php file containing Kount_Access_NopLoggerFactory class.
  */
@@ -23,5 +24,3 @@ class Kount_Access_NopLoggerFactory implements Kount_Access_LoggerFactory {
   }
 
 } // end Kount_Log_Factory_NopLoggerFactory
-
-

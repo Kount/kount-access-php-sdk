@@ -2,6 +2,7 @@
 
 require __DIR__ . '/./kount_access_exception.php';
 require __DIR__ . '/./kount_access_curl_service.php';
+require __DIR__ . '/./Log/Factory/LogFactory.php';
 
 /**
  * Service API access class.
@@ -39,6 +40,13 @@ class Kount_Access_Service
   private $__curl_service;
 
   /**
+   * A logger instance.
+   * @var Kount_Access_Logger
+   */
+  protected $logger;
+
+
+  /**
    * Constructor
    *
    * @param int $merchant_id The Merchant's ID
@@ -72,6 +80,11 @@ class Kount_Access_Service
 
     $this->__server_name = $server_name;
     $this->__version = $version;
+
+    $loggerFactory = Kount_Access_LogFactory::getLogFactory();
+    $this->logger = $loggerFactory->getLogger(__CLASS__);
+
+    $this->logger->info("Access SDK using merchantId = " . $merchant_id . ", host = " . $server_name);
   } //end __construct
 
   /**
@@ -88,6 +101,8 @@ class Kount_Access_Service
     }
 
     $endpoint = "https://$this->__server_name/api/device?v=$this->__version&s=$session_id";
+    $this->logger->debug("device endpoint: " . $endpoint);
+
     return $this->__curl_service->__call_endpoint($endpoint, "GET", null);
   } //end get_device
 
@@ -118,6 +133,8 @@ class Kount_Access_Service
     }
 
     $endpoint = "https://$this->__server_name/api/velocity";
+    $this->logger->debug("velocity endpoint: " . $endpoint);
+
     $u = hash('sha256', $user_id);
     $p = hash('sha256', $password);
     $a = hash('sha256', $user_id . ":" . $password);
@@ -129,6 +146,14 @@ class Kount_Access_Service
       "ah" => $a
     );
 
+    $this->logger->debug(
+      "velocity request parameters : "
+      . "user_id = "     . $u . ', '
+      . "password = "    . $p . ', '
+      . "credentials = " . $a . ', '
+      . "session_id = "  . $session_id . ', '
+      . "version = "     . $this->__version
+    );
     return $this->__curl_service->__call_endpoint($endpoint, "POST", $data);
   } //end get_velocity
 
@@ -159,6 +184,8 @@ class Kount_Access_Service
     }
 
     $endpoint = "https://$this->__server_name/api/decision";
+    $this->logger->debug("decision endpoint: " . $endpoint);
+
     $u = hash('sha256', $user_id);
     $p = hash('sha256', $password);
     $a = hash('sha256', $user_id . ":" . $password);
@@ -168,6 +195,15 @@ class Kount_Access_Service
       "uh" => $u,
       "ph" => $p,
       "ah" => $a
+    );
+
+    $this->logger->debug(
+      "decision request parameters : "
+      . "user_id = "      . $u . ', '
+      . "password = "     . $p . ', '
+      . "credentials = "  . $a . ', '
+      . "session_id = "   . $session_id . ', '
+      . "version = "      . $this->__version
     );
     return $this->__curl_service->__call_endpoint($endpoint, "POST", $data);
   } //end get_decision

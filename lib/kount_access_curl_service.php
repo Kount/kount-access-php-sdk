@@ -38,9 +38,19 @@ class Kount_access_curl_service
    * @param $merchant_id
    * @param $api_key
    */
-  public function __construct($merchant_id, $api_key)
-  {
+
+  /**
+   * A logger instance.
+   * @var Kount_Access_Logger
+   */
+  protected $logger;
+
+  public function __construct($merchant_id, $api_key) {
+    $loggerFactory = Kount_Access_LogFactory::getLogFactory();
+    $this->logger = $loggerFactory->getLogger(__CLASS__);
+
     $this->__encoded_credentials = base64_encode($merchant_id . ":" . $api_key);
+    $this->logger->debug("encoded credentials: " . $this->__encoded_credentials);
   }
 
   /**

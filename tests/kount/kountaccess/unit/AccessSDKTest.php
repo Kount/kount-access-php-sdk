@@ -1,6 +1,7 @@
 <?php
 
 require __DIR__ . "/../../../../lib/kount_access_service.php";
+require __DIR__ . "/../../../../vendor/autoload.php";
 
 class AccessSDKTest extends PHPUnit_Framework_TestCase {
 
@@ -24,6 +25,14 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
   . "        \"ipAddress\": \"" . self::ipAddress . "\", " . "        \"ipGeo\": \"" . self::ipGeo . "\", "
   . "        \"mobile\": 1, " . "        \"proxy\": 0" . "    }," . "    \"response_id\": \"" . self::responseId
   . "\"" . "}";
+
+  private $logger;
+
+  public function __construct()
+  {
+    Logger::configure(__DIR__ . '/../../../../configTest.xml.xml');
+    $this->logger = Logger::getLogger("Test Access Logger");
+  }
 
   const velocityJSON = "{" . "    \"device\": {" . "        \"id\": \"" . self::fingerprint . "\", "
                            . "        \"ipAddress\": \"" . self::ipAddress . "\", " . "        \"ipGeo\": \"" . self::ipGeo . "\", "
@@ -131,6 +140,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
     $this->assertNotNull($deviceInfo);
 
     $deviceInfoDecoded = json_decode($deviceInfo, true);
+    $this->logger->info($deviceInfoDecoded);
 
     $this->assertEquals(self::fingerprint, $deviceInfoDecoded['device']['id']);
     $this->assertEquals(self::ipAddress, $deviceInfoDecoded['device']['ipAddress']);
@@ -156,6 +166,8 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
     $this->assertNotNull($velocity);
 
     $velocityInfo = json_decode($velocity, true);
+    $this->logger->info($velocityInfo);
+
     $device = $velocityInfo['device'];
 
     $this->assertEquals(self::fingerprint, $device['id']);
@@ -192,6 +204,8 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
     $this->assertNotNull($decision);
 
     $decisionInfo = json_decode($decision, true);
+    $this->logger->info($decisionInfo);
+
     $device = $decisionInfo['device'];
 
     $this->assertEquals(self::fingerprint, $device['id']);

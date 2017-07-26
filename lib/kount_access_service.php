@@ -94,9 +94,7 @@ class Kount_Access_Service
    */
   public function get_device($session_id)
   {
-    if(is_null($session_id) || empty($session_id) || sizeof($session_id) > 32) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, "Invalid session id.");
-    }
+    $this->verifySession($session_id);
 
     $endpoint = "https://$this->__server_name/api/device?v=$this->__version&s=$session_id";
     $this->logger->debug("device endpoint: " . $endpoint);
@@ -118,17 +116,8 @@ class Kount_Access_Service
    */
   public function get_velocity($session_id, $user_id, $password)
   {
-    if(is_null($session_id) || empty($session_id) || sizeof($session_id) > 32) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid session id.");
-    }
-
-    if(is_null($user_id) || empty($user_id)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid user id.");
-    }
-
-    if(is_null($password) || empty($password)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid password id.");
-    }
+    $this->verifySession($session_id);
+    $this->verifyUserCredentials($user_id, $password);
 
     $endpoint = "https://$this->__server_name/api/velocity";
     $this->logger->debug("velocity endpoint: " . $endpoint);
@@ -170,17 +159,8 @@ class Kount_Access_Service
    */
   public function get_decision($session_id, $user_id, $password)
   {
-    if(is_null($session_id) || empty($session_id) || sizeof($session_id) > 32) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid session id.");
-    }
-
-    if(is_null($user_id) || empty($user_id)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid user id.");
-    }
-
-    if(is_null($password) || empty($password)) {
-      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid password id.");
-    }
+    $this->verifySession($session_id);
+    $this->verifyUserCredentials($user_id, $password);
 
     $endpoint = "https://$this->__server_name/api/decision";
     $this->logger->debug("decision endpoint: " . $endpoint);
@@ -207,6 +187,35 @@ class Kount_Access_Service
 
     return $this->__curl_service->__call_endpoint($endpoint, "POST", $data);
   } //end get_decision
+
+  /**
+   * Function that validates the session id being passed.
+   *
+   * @param string $session_id| The session ID used by the Device
+   * @throws Kount_Access_Exception thrown if session is invalid
+   */
+  public function verifySession($session_id) {
+    if(is_null($session_id) || strlen(utf8_decode($session_id)) != 32) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid session" . $session_id . " id. Must be 32 characters in length");
+    }
+  }
+
+  /**
+   * Function that validates the user id  and password being passed.
+   *
+   * @param string $user_id | The user's User ID
+   * @param string $password | The user's Password
+   * @throws Kount_Access_Exception thrown if user id or password are invalid
+   */
+  public function verifyUserCredentials($user_id, $password) {
+    if(is_null($user_id) || empty($user_id)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid user id.");
+    }
+
+    if(is_null($password) || empty($password)) {
+      throw new Kount_Access_Exception(Kount_Access_Exception::INVALID_DATA, " Invalid password id.");
+    }
+  }
 
 } //end kount_access_api
 

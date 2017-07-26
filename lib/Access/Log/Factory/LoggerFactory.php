@@ -1,23 +1,23 @@
 <?php
 /**
- * LoggerFactory.php file containing Kount_Access_LoggerFactory interface.
+ * LoggerFactory.php file containing Access_Log_Factory_LoggerFactory interface.
  */
 
 /**
- * Interface for factory classes that create Kount_Access_Logger objects.
+ * Interface for factory classes that create Access_Log_Factory_LoggerFactory objects.
  *
- * @package Kount_Access_Log
+ * @package Access_Log
  * @subpackage Factory
  * @author Kount <custserv@kount.com>
  * @copyright 2012 Kount, Inc. All Rights Reserved.
  */
-interface Kount_Access_LoggerFactory {
+interface Access_Log_Factory_LoggerFactory {
 
   /**
    * Get a named logger.
    *
    * @param string $name Name of logger
-   * @return Kount_Access_LoggerFactory
+   * @return Access_Log_Factory_LoggerFactory
    */
   public static function getLogger ($name);
 

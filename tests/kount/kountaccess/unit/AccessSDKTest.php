@@ -1,7 +1,5 @@
 <?php
 
-require __DIR__ . "/../../../../lib/kount_access_service.php";
-
 class AccessSDKTest extends PHPUnit_Framework_TestCase {
 
   const version     = "0210";
@@ -72,51 +70,51 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
 
   public function testAccessInit () {
     try {
-      $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version);
+      $kount_access = new Access_Service(self::merchantId, self::apiKey, self::host, self::version);
       $this->assertNotNull($kount_access);
-    } catch (Kount_Access_Exception $e) {
+    } catch (Access_Exception $e) {
       echo "Bad Kount Access Exception " . $e->getAccessErrorType() . ":" . $e->getMessage();
     }
   }
 
   public function testAccessInitNoHost() {
     try {
-      $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, null, self::version);
+      $kount_access = new Access_Service(self::merchantId, self::apiKey, null, self::version);
       $this->fail('Should have failed host.');
-    } catch (Kount_Access_Exception $ae) {
-      $this->assertEquals(Kount_Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
+    } catch (Access_Exception $ae) {
+      $this->assertEquals(Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
     }
   }
 
   public function testAccessInitBadMerchant() {
     try {
-      $kount_access = new Kount_Access_Service(-1, self::apiKey, self::host, self::version);
+      $kount_access = new Access_Service(-1, self::apiKey, self::host, self::version);
       $this->fail("Should have failed merchantId");
-    } catch (Kount_Access_Exception $ae) {
-      $this->assertEquals(Kount_Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
+    } catch (Access_Exception $ae) {
+      $this->assertEquals(Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
     }
   }
 
   public function testAccessInitNoApiKey() {
     try {
-      $kount_access = new Kount_Access_Service(self::merchantId, null, self::host, self::version);
+      $kount_access = new Access_Service(self::merchantId, null, self::host, self::version);
       $this->fail("Should have failed apiKey");
-    } catch (Kount_Access_Exception $ae) {
-      $this->assertEquals(Kount_Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
+    } catch (Access_Exception $ae) {
+      $this->assertEquals(Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
     }
   }
 
   public function testAccessInitBlankApiKey() {
     try {
-      $kount_access = new Kount_Access_Service(self::merchantId, " ", self::host, self::version);
+      $kount_access = new Access_Service(self::merchantId, " ", self::host, self::version);
       $this->fail("Should have failed apiKey");
-    } catch (Kount_Access_Exception $ae) {
-      $this->assertEquals(Kount_Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
+    } catch (Access_Exception $ae) {
+      $this->assertEquals(Access_Exception::INVALID_DATA, $ae->getAccessErrorType());
     }
   }
 
   public function testGetDevice() {
-    $mock = $this->getMockBuilder(Kount_access_curl_service::class)
+    $mock = $this->getMockBuilder(Access_CurlService::class)
                  ->setConstructorArgs(array(self::merchantId, self::apiKey))
                  ->setMethods(['__call_endpoint'])
                  ->getMock();
@@ -125,7 +123,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
          ->method('__call_endpoint')
          ->will($this->returnValue(self::deviceJSON));
 
-    $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
+    $kount_access = new Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
 
     $deviceInfo = $kount_access->get_device(self::sessionId);
     $this->assertNotNull($deviceInfo);
@@ -141,7 +139,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetVelocity() {
-    $mock = $this->getMockBuilder(Kount_access_curl_service::class)
+    $mock = $this->getMockBuilder(Access_CurlService::class)
                  ->setConstructorArgs(array(self::merchantId, self::apiKey))
                  ->setMethods(['__call_endpoint'])
                  ->getMock();
@@ -150,7 +148,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
          ->method('__call_endpoint')
          ->will($this->returnValue(self::velocityJSON));
 
-    $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
+    $kount_access = new Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
 
     $velocity = $kount_access->get_velocity(self::sessionId, self::user, self::password);
     $this->assertNotNull($velocity);
@@ -177,7 +175,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
   }
 
   public function testGetDecision() {
-    $mock = $this->getMockBuilder(Kount_access_curl_service::class)
+    $mock = $this->getMockBuilder(Access_CurlService::class)
                  ->setConstructorArgs(array(self::merchantId, self::apiKey))
                  ->setMethods(['__call_endpoint'])
                  ->getMock();
@@ -186,7 +184,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
          ->method('__call_endpoint')
          ->will($this->returnValue(self::decisionJSON));
 
-    $kount_access = new Kount_Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
+    $kount_access = new Access_Service(self::merchantId, self::apiKey, self::host, self::version, $mock);
 
     $decision = $kount_access->get_decision(self::sessionId, self::user, self::password);
     $this->assertNotNull($decision);

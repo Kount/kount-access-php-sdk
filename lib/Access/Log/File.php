@@ -1,17 +1,17 @@
 <?php
 /**
- * File.php file containing Kount_SimpleLogger_File class.
+ * File.php file containing Access_Log_File class.
  */
 
 /**
  * A simple file logger.
  *
- * @package Kount_SimpleLogger
+ * @package Access_Log
  * @author Kount <custserv@kount.com>
  * @version $Id$
  * @copyright 2012 Kount, Inc. All Rights Reserved.
  */
-class Kount_SimpleLogger_File {
+class Access_Log_File {
 
   /**
    * Format for a time stamp.
@@ -56,7 +56,7 @@ class Kount_SimpleLogger_File {
    */
   public function __construct ($name) {
     $this->name = $name;
-    $configReader = Kount_ConfigFileReader::instance();
+    $configReader = Access_Log_ConfigFileReader::instance();
     $logFile = $configReader->getConfigSetting('SIMPLE_LOG_FILE');
     $logPath = $configReader->getConfigSetting('SIMPLE_LOG_PATH');
     $this->logFilePath = $logPath . DIRECTORY_SEPARATOR . $logFile;

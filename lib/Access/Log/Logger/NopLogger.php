@@ -1,81 +1,70 @@
 <?php
-require __DIR__ . '/../File.php';
-require __DIR__ . './Logger.php';
-
 /**
- * SimpleLogger.php containing Kount_Access_SimpleLogger class.
+ * NopLogger.php file containing Access_Log_Logger_NopLogger class.
  */
 
 /**
- * Implementation of a Simple Logging facade.
- * @package Kount_Access_Log
+ * Implementation of a No OPeration logger. Just silently discards logging.
+ * @package Access_Log
  * @subpackage Logger
  * @author Kount <custserv@kount.com>
  * @version $Id$
  * @copyright 2012 Kount, Inc. All Rights Reserved.
  */
-class Kount_Access_SimpleLogger implements Kount_Access_Logger {
-  /**
-   * A simple logger instance.
-   * @var $logger
-   */
-  protected $logger;
+class Access_Log_Logger_NopLogger implements Access_Log_Logger_Logger {
 
   /**
-   * Constructor for a simple logger binding.
-   * @param string $name Name of the logger
+   * Constructor for Nop logger.
+   * @param string $name Logger name
    */
   public function __construct ($name) {
-    $this->logger = new Kount_SimpleLogger_File($name);
+    //Just accept a logger name and do nothing with it.
   }
 
   /**
-   * Log a debug level message.
+   * Discard a debug level message.
    * @param string $message Message to log
    * @param Exception $exception Exception to log
    * @return void
    */
   public function debug ($message, $exception = null) {
-    $this->logger->debug($message, $exception);
   }
 
   /**
-   * Log a debug level message.
+   * Discard an info level message.
    * @param string $message Message to log
    * @param Exception $exception Exception to log
    * @return void
    */
   public function info ($message, $exception = null) {
-    $this->logger->info($message, $exception);
   }
 
   /**
-   * Log a debug level message.
+   * Discard a warn level message.
    * @param string $message Message to log
    * @param Exception $exception Exception to log
    * @return void
    */
   public function warn ($message, $exception = null) {
-    $this->logger->warn($message, $exception);
   }
 
   /**
-   * Log a debug level message.
+   * Discard an error level message.
    * @param string $message Message to log
    * @param Exception $exception Exception to log
    * @return void
    */
   public function error ($message, $exception = null) {
-    $this->logger->error($message, $exception);
   }
 
   /**
-   * Log a debug level message.
+   * Discard a fatal level message.
    * @param string $message Message to log
    * @param Exception $exception Exception to log
    * @return void
    */
   public function fatal ($message, $exception = null) {
-    $this->logger->fatal($message, $exception);
   }
-}
+
+} // end Kount_Access_NopLogger
+

@@ -10,7 +10,7 @@
  * @version 2.1.0
  * @copyright 2015 Kount, Inc. All Rights Reserved.
  */
-class Kount_access_curl_service
+class Access_CurlService
 {
 
   /**
@@ -31,7 +31,7 @@ class Kount_access_curl_service
   private $errorMsg;
 
   /**
-   * Kount_access_curl_service constructor.
+   * Access_CurlService constructor.
    *
    * Initializes __encoded_credentials variable used in curl call.
    *
@@ -41,12 +41,12 @@ class Kount_access_curl_service
 
   /**
    * A logger instance.
-   * @var Kount_Access_Logger
+   * @var Access_Log_Logger_Logger
    */
   protected $logger;
 
   public function __construct($merchant_id, $api_key) {
-    $loggerFactory = Kount_Access_LogFactory::getLogFactory();
+    $loggerFactory = Access_Log_Factory_LogFactory::getLogFactory();
     $this->logger = $loggerFactory->getLogger(__CLASS__);
 
     $this->__encoded_credentials = base64_encode($merchant_id . ":" . $api_key);
@@ -59,7 +59,7 @@ class Kount_access_curl_service
    * @param string $endpoint URL to endpoint
    * @param string $method Either POST or GET
    * @param array $params POST parameters
-   * @throws Kount_Access_Exception::NETWORK_ERROR if there is a problem with the curl call
+   * @throws Access_Exception::NETWORK_ERROR if there is a problem with the curl call
    * @return array JSON Response decoded or error array with cURL's
    *               ERROR_CODE and ERROR_MESSAGE values
    */
@@ -110,7 +110,7 @@ class Kount_access_curl_service
           $this->errorCode => $resp_code,
           $this->errorMsg => $msg,
         );
-        throw new Kount_Access_Exception(Kount_Access_Exception::NETWORK_ERROR, "Bad Response(" . $resp_code . ") " . $msg);
+        throw new Access_Exception(Access_Exception::NETWORK_ERROR, "Bad Response(" . $resp_code . ") " . $msg);
       } else {
         $resp_body = json_decode($msg, true);
       }
@@ -119,7 +119,7 @@ class Kount_access_curl_service
         $this->errorCode => $err_code,
         $this->errorMsg => curl_error($ch),
       );
-      throw new Kount_Access_Exception(Kount_Access_Exception::NETWORK_ERROR, "Bad Response(" . $err_code . ") " . curl_error($ch));
+      throw new Access_Exception(Access_Exception::NETWORK_ERROR, "Bad Response(" . $err_code . ") " . curl_error($ch));
     }
 
     curl_close($ch);

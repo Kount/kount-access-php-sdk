@@ -1,18 +1,18 @@
 <?php
 /**
- * Logger.php file containing Kount_Access_Logger interface.
+ * Logger.php file containing Access_Log_Logger_Logger interface.
  */
 
 /**
  * Logger interface containing the debug level messages.
  *
- * @package Kount_Access_Log
+ * @package Access_Log
  * @subpackage Logger
  * @author Kount <custserv@kount.com>
  * @version $Id$
  * @copyright 2012 Kount, Inc. All Rights Reserved.
  */
-interface Kount_Access_Logger {
+interface Access_Log_Logger_Logger {
 
   /**
    * Log a debug level message.
@@ -54,4 +54,4 @@ interface Kount_Access_Logger {
    */
   public function fatal ($message, $exception = null);
 
-} // end Kount_Access_Logger
+} // end Access_Log_Logger_Logger

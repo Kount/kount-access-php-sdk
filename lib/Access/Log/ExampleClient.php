@@ -3,7 +3,7 @@
 /**
  * An example logger client.
  *
- * @package Kount_Access_Log
+ * @package Access_Log
  * @author Kount <custserv@kount.com>
  * @version $Id$
  * @copyright 2012 Kount, Inc. All Rights Reserved.
@@ -11,7 +11,7 @@
 
 require __DIR__ . './Factory/LogFactory.php';
 
-$loggerFactory = Kount_Access_LogFactory::getLogFactory();
+$loggerFactory = Access_Log_Factory_LogFactory::getLogFactory();
 $logger = $loggerFactory->getLogger('ExampleClient');
 
 //Example log messages

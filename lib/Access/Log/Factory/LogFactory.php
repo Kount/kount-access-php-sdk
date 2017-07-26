@@ -1,21 +1,23 @@
 <?php
 
-require __DIR__ . '/../ConfigFileReader.php';
-require __DIR__ . './SimpleLogFactory.php';
+//require __DIR__ . '/../ConfigFileReader.php';
+//require __DIR__ . './SimpleLogFactory.php';
+//require __DIR__ . './NopLogFactory.php';
+
 
 /**
- * LogFactory.php file containing Kount_Access_Log_Factory_LogFactory class.
+ * LogFactory.php file containing Access_Log_Factory_LogFactory class.
  */
 
 /**
- * A factory class for creating Kount_Access_Log_Factory_LogFactory objects.
+ * A factory class for creating Access_Log_Factory_LogFactory objects.
  *
- * @package Kount_Access_Log
+ * @package Access_Log
  * @subpackage Factory
  * @author Kount <custserv@kount.com>
  * @copyright 2012 Kount, Inc. All Rights Reserved.
  */
-class Kount_Access_LogFactory {
+class Access_Log_Factory_LogFactory {
 
   /**
    * NOP logger configuration setting name.
@@ -31,7 +33,7 @@ class Kount_Access_LogFactory {
 
   /**
    * Logger factory.
-   * @var Kount_Access_LogFactory
+   * @var Access_Log_Factory_LogFactory
    */
   protected static $loggerFactory = null;
 
@@ -39,22 +41,22 @@ class Kount_Access_LogFactory {
    * Get the logger factory to be used.
    * @throws Exception "Unknown logger defined in setting file" when $logger doesn't mach
    * any of the configuration setting names.
-   * @return Kount_Access_LoggerFactory
+   * @return Access_Log_Factory_LoggerFactory
    */
   public static function getLogFactory () {
 
     if (self::$loggerFactory == null) {
-      $configReader = Kount_ConfigFileReader::instance();
+      $configReader = Access_Log_ConfigFileReader::instance();
       $logger = $configReader->getConfigSetting('LOGGER');
 
 
       if ($logger == self::NOP_LOGGER) {
-        self::$loggerFactory = new Kount_Access_NopLoggerFactory();
+        self::$loggerFactory = new Access_Log_Factory_NopLogFactory();
       } else if ($logger == self::SIMPLE_LOGGER) {
-        self::$loggerFactory = new Kount_Access_SimpleLogFactory();
+        self::$loggerFactory = new Access_Log_Factory_SimpleLogFactory();
       } else {
         throw new Exception("Unknown logger [{$logger}] defined in setting " .
-          "file [" . Kount_ConfigFileReader::SETTINGS_FILE . "]");
+          "file [" . Access_Log_ConfigFileReader::SETTINGS_FILE . "]");
       }
     }
 

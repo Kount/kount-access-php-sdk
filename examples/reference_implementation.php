@@ -1,10 +1,10 @@
 <?php
 /**
  * This is a SIMPLE reference implementation of how to use the three API calls
- * from the kount_access_service.php class.
+ * from the Access_Service.php class.
  * @copyright 2015 Kount, Inc. All Rights Reserved.
  */
-require __DIR__ . "/../lib/kount_access_service.php";
+require __DIR__ . "/../lib/autoload.php";
 
 /**
  * The Kount_Access_Service can be set up once and then used multiple times

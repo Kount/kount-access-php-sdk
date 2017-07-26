@@ -1,6 +1,6 @@
 <?php
 /**
- * ConfigFileReader.php file containing Kount_ConfigFileReader class.
+ * ConfigFileReader.php file containing Access_Log_ConfigFileReader class.
  */
 
 if (!defined('KOUNT_SETTINGS_FILE')) {
@@ -12,18 +12,18 @@ if (!defined('KOUNT_SETTINGS_FILE')) {
 }
 
 /**
- * A class for reading Kount configuration files.
+ * A class for reading Kount Access configuration files.
  *
- * @package Kount_Util
+ * @package Access_Log
  * @author Kount <custserv@kount.com>
  * @version $Id: Request.php 11177 2010-08-16 21:44:19Z bst $
  * @copyright 2012 Kount, Inc. All Rights Reserved.
  */
-class Kount_ConfigFileReader {
+class Access_Log_ConfigFileReader {
 
   /**
    * An instance of this class.
-   * @var Kount_ConfigFileReader
+   * @var Access_Log_ConfigFileReader
    */
   protected static $instance = null;
 
@@ -65,15 +65,15 @@ class Kount_ConfigFileReader {
   /**
    * Get an instance of this class.
    * @param string @path| Absolute path to custom settings file.
-   * @return Kount_ConfigFileReader
+   * @return Access_Log_ConfigFileReader
    */
   public static function instance ($path = null) {
     if (null == self::$instance) {
       if($path == null) {
-        self::$instance = new Kount_ConfigFileReader();
+        self::$instance = new Access_Log_ConfigFileReader();
       } else {
         define('KOUNT_CUSTOM_SETTINGS_FILE', realpath($path));
-        self::$instance = new Kount_ConfigFileReader($path);
+        self::$instance = new Access_Log_ConfigFileReader($path);
       }
     }
     return self::$instance;
@@ -101,4 +101,4 @@ class Kount_ConfigFileReader {
     throw new Exception("The configuration setting [{$name}] is not defined");
   }
 
-} // end Kount_Util_ConfigFileReader
+} // end Access_Log_ConfigFileReader

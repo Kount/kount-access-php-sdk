@@ -1,0 +1,9 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+  <appender name="Appender" class="LoggerAppenderFile">
+    <param name="file" value="kount_access_sdk.log" />
+  </appender>
+  <root>
+    <level value="INFO" />
+    <appender_ref ref="Appender" />
+  </root>
+</configuration>

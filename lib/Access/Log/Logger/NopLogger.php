@@ -66,5 +66,5 @@ class Access_Log_Logger_NopLogger implements Access_Log_Logger_Logger {
   public function fatal ($message, $exception = null) {
   }
 
-} // end Kount_Access_NopLogger
+} // end Access_Log_Logger_NopLogger
 

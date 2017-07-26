@@ -177,5 +177,5 @@ class Access_Log_File {
     return false;
   }
 
-} // end Kount_SimpleLogger_File
+} // end Access_Log_File
 

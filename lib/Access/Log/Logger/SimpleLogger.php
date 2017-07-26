@@ -1,6 +1,4 @@
 <?php
-/*require __DIR__ . '/../File.php';
-require __DIR__ . './Logger.php';*/
 
 /**
  * SimpleLogger.php containing Access_Log_Logger_SimpleLogger class.
@@ -78,4 +76,4 @@ class Access_Log_Logger_SimpleLogger implements Access_Log_Logger_Logger {
   public function fatal ($message, $exception = null) {
     $this->logger->fatal($message, $exception);
   }
-}
+} // end Access_Log_Logger_SimpleLogger

@@ -42,7 +42,7 @@ $main = function ($argc, $argv) {
     ///////////////////////////////////////////////////////////////////////////
 
     // Create an instance of the service
-    $kount_access = new Kount_Access_Service($merchant_id, $api_key, $server);
+    $kount_access = new Access_Service($merchant_id, $api_key, $server);
 
     ///////////////////////////////////////////////////////////////////////////
     // If you are just looking for information about the device (like the

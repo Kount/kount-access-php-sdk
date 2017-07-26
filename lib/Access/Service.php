@@ -204,5 +204,5 @@ class Access_Service
     return $this->__curl_service->__call_endpoint($endpoint, "POST", $data);
   } //end get_decision
 
-} //end kount_access_api
+} // end Access_Service
 

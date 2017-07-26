@@ -21,4 +21,4 @@ interface Access_Log_Factory_LoggerFactory {
    */
   public static function getLogger ($name);
 
-} // end Kount_Access_LoggerFactory
+} // end Access_Log_Factory_LoggerFactory

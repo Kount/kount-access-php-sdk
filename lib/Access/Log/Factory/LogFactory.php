@@ -1,10 +1,5 @@
 <?php
 
-//require __DIR__ . '/../ConfigFileReader.php';
-//require __DIR__ . './SimpleLogFactory.php';
-//require __DIR__ . './NopLogFactory.php';
-
-
 /**
  * LogFactory.php file containing Access_Log_Factory_LogFactory class.
  */
@@ -62,4 +57,4 @@ class Access_Log_Factory_LogFactory {
 
     return self::$loggerFactory;
   }
-}
+} // end Access_Log_Factory_LogFactory

@@ -126,4 +126,4 @@ class Access_CurlService
     return $resp_body;
   } //end call_endpoint
 
-}
+} // end Access_CurlService

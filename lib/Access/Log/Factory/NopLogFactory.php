@@ -1,7 +1,5 @@
 <?php
 
-//require __DIR__ . '/../Logger/NopLogger.php';
-
 /**
  * NopLogFactory.php file containing Access_Log_Factory_NopLogFactory class.
  */
@@ -25,4 +23,4 @@ class Access_Log_Factory_NopLogFactory implements Access_Log_Factory_LoggerFacto
     return new Access_Log_Logger_NopLogger($name);
   }
 
-} // end Kount_Log_Factory_NopLoggerFactory
+} // end Access_Log_Factory_NopLogFactory

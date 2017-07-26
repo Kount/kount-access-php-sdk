@@ -51,4 +51,5 @@ class Access_Exception extends Exception {
   public function getAccessErrorType() {
     return $this->accessErrorType;
   }
-}
+
+} // end Access_Exception

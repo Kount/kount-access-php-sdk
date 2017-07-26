@@ -1,6 +1,4 @@
 <?php
-//require __DIR__  . './LoggerFactory.php';
-//require __DIR__  . '/../Logger/SimpleLogger.php';
 
 /**
  * SimpleLogFactory.php file containing Access_Log_Factory_SimpleLogFactory class.
@@ -26,4 +24,4 @@ class Access_Log_Factory_SimpleLogFactory implements
     return new Access_Log_Logger_SimpleLogger($name);
   }
 
-}
+} // end Access_Log_Factory_SimpleLogFactory

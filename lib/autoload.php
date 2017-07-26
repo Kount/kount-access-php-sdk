@@ -46,4 +46,4 @@ if (function_exists('spl_autoload_register')) {
 } else {
   error_log('Unable to register kount_autoload function.');
 
-} //end if
+}

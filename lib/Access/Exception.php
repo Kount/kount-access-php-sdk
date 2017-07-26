@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Kount Access exception handler thrown if there are issues with kount_access_service
+ * Kount Access exception handler thrown if there are issues with Access_Exception
  *
  */
 
-class Kount_Access_Exception extends Exception {
+class Access_Exception extends Exception {
 
   /**
    * Private key $accessErrorType
@@ -30,7 +30,7 @@ class Kount_Access_Exception extends Exception {
 
   /**
    * Const variable INVALID_DATA
-   * Missing or malformed data (bad hostnames, missing/empty fields)
+   * Missing or malformed data (bad host names, missing/empty fields)
    * @var string
    */
   const INVALID_DATA = "INVALID_DATA";
@@ -51,4 +51,5 @@ class Kount_Access_Exception extends Exception {
   public function getAccessErrorType() {
     return $this->accessErrorType;
   }
-}
+
+} // end Access_Exception

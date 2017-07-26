@@ -140,7 +140,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
     $this->assertNotNull($deviceInfo);
 
     $deviceInfoDecoded = json_decode($deviceInfo, true);
-    $this->logger->info($deviceInfoDecoded);
+    $this->logger->debug($deviceInfoDecoded);
 
     $this->assertEquals(self::fingerprint, $deviceInfoDecoded['device']['id']);
     $this->assertEquals(self::ipAddress, $deviceInfoDecoded['device']['ipAddress']);
@@ -166,7 +166,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
     $this->assertNotNull($velocity);
 
     $velocityInfo = json_decode($velocity, true);
-    $this->logger->info($velocityInfo);
+    $this->logger->debug($velocityInfo);
 
     $device = $velocityInfo['device'];
 
@@ -204,7 +204,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
     $this->assertNotNull($decision);
 
     $decisionInfo = json_decode($decision, true);
-    $this->logger->info($decisionInfo);
+    $this->logger->debug($decisionInfo);
 
     $device = $decisionInfo['device'];
 

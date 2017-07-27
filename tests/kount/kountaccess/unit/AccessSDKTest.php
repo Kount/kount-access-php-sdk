@@ -30,7 +30,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase {
 
   public function __construct()
   {
-    Logger::configure(__DIR__ . '/../../../../configTest.xml');
+    Logger::configure(__DIR__ . '/../../../../config.xml');
     $this->logger = Logger::getLogger("Test Access Logger");
   }
 

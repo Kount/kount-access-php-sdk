@@ -97,7 +97,7 @@ class Kount_Access_Service
     $this->verifySession($session_id);
 
     $endpoint = "https://$this->__server_name/api/device?v=$this->__version&s=$session_id";
-    $this->logger->debug("device endpoint: " . $endpoint);
+    $this->logger->info("device endpoint: " . $endpoint);
 
     return $this->__curl_service->__call_endpoint($endpoint, "GET", null);
   } //end get_device
@@ -120,7 +120,7 @@ class Kount_Access_Service
     $this->verifyUserCredentials($user_id, $password);
 
     $endpoint = "https://$this->__server_name/api/velocity";
-    $this->logger->debug("velocity endpoint: " . $endpoint);
+    $this->logger->info("velocity endpoint: " . $endpoint);
 
     $u = hash('sha256', $user_id);
     $p = hash('sha256', $password);
@@ -133,7 +133,7 @@ class Kount_Access_Service
       "ah" => $a
     );
 
-    $this->logger->debug(
+    $this->logger->info(
       "velocity request parameters : "
       . "user_id = "     . $u . ', '
       . "password = "    . $p . ', '
@@ -163,7 +163,7 @@ class Kount_Access_Service
     $this->verifyUserCredentials($user_id, $password);
 
     $endpoint = "https://$this->__server_name/api/decision";
-    $this->logger->debug("decision endpoint: " . $endpoint);
+    $this->logger->info("decision endpoint: " . $endpoint);
 
     $u = hash('sha256', $user_id);
     $p = hash('sha256', $password);
@@ -176,7 +176,7 @@ class Kount_Access_Service
       "ah" => $a
     );
 
-    $this->logger->debug(
+    $this->logger->info(
       "decision request parameters : "
       . "user_id = "      . $u . ', '
       . "password = "     . $p . ', '

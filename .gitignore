@@ -7,3 +7,4 @@ composer.lock
 
 # Log file
 kount_access_sdk.log
+kount_access_sdk_tests.log

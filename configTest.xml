@@ -1,9 +1,0 @@
-<configuration xmlns="http://logging.apache.org/log4php/">
-  <appender name="Test" class="LoggerAppenderFile">
-    <param name="file" value="kount_access_tests.log" />
-  </appender>
-  <root>
-    <level value="DEBUG" />
-    <appender_ref ref="Test" />
-  </root>
-</configuration>

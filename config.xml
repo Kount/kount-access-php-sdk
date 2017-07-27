@@ -1,9 +1,21 @@
 <configuration xmlns="http://logging.apache.org/log4php/">
-  <appender name="Appender" class="LoggerAppenderFile">
+  <appender name="default" threshold="INFO" class="LoggerAppenderFile">
     <param name="file" value="kount_access_sdk.log" />
+    <filter class="LoggerFilterLevelRange">
+      <param name="levelMin" value="info" />
+      <param name="levelMax" value="error" />
+    </filter>
+  </appender>
+  <appender name="test" threshold="DEBUG" class="LoggerAppenderFile">
+    <param name="file" value="kount_access_sdk_tests.log" />
+    <filter class="LoggerFilterLevelRange">
+      <param name="levelMin" value="debug" />
+      <param name="levelMax" value="error" />
+    </filter>
   </appender>
   <root>
-    <level value="INFO" />
-    <appender_ref ref="Appender" />
+    <level value="DEBUG" />
+      <appender_ref ref="default"/>
+      <appender_ref ref="test"/>
   </root>
 </configuration>

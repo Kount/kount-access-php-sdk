@@ -3,14 +3,14 @@
     <param name="file" value="kount_access_sdk.log" />
     <filter class="LoggerFilterLevelRange">
       <param name="levelMin" value="info" />
-      <param name="levelMax" value="info" />
+      <param name="levelMax" value="error" />
     </filter>
   </appender>
   <appender name="test" threshold="DEBUG" class="LoggerAppenderFile">
     <param name="file" value="kount_access_sdk_tests.log" />
     <filter class="LoggerFilterLevelRange">
       <param name="levelMin" value="debug" />
-      <param name="levelMax" value="debug" />
+      <param name="levelMax" value="error" />
     </filter>
   </appender>
   <root>

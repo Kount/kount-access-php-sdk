@@ -1,5 +1,8 @@
 kount-access-php-sdk 2.1.1
 ===========================
+**09/11/2017**
+* Updated README.md, removed session id config changed mentioned for php.ini.  Session ID is now up to 32 characters, not exactly 32 anymore.
+
 **07/14/2017**
 
 ### New features

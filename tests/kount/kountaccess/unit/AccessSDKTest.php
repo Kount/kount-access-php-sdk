@@ -6,11 +6,11 @@ require __DIR__ . "/../../../../vendor/autoload.php";
 class AccessSDKTest extends PHPUnit_Framework_TestCase {
 
   const version     = "0210";
-  const merchantId  = 999999;
+  const merchantId  = 0;
   const host        = self::merchantId . ".kountaccess.com";
   const accessUrl   = "https://" . self::host . "/access";
-  const apiKey      = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI5OTk2NjYiLCJhdWQiOiJLb3VudC4xIiwiaWF0IjoxNDk0NTM0Nzk5LCJzY3AiOnsia2EiOm51bGwsImtjIjpudWxsLCJhcGkiOmZhbHNlLCJyaXMiOnRydWV9fQ.eMmumYFpIF-d1up_mfxA5_VXBI41NSrNVe9CyhBUGck";
-  const serverUrl   = "api-sandbox02.kountaccess.com";
+  const apiKey      = "PUT_YOUR_API_KEY_HERE";
+  const serverUrl   = "api-sandbox01.kountaccess.com";
   const fingerprint = '75012bd5e5b264c4b324f5c95a769541';
   const sessionId   = "8f18a81cfb6e3179ece7138ac81019aa";
   const sessionUrl  = "https://" . self::host . "/api/session=" . self::sessionId;

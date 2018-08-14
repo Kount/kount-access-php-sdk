@@ -10,7 +10,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
 {
 
     const VERSION = "0400";
-    const MERCHANT_ID = 666999;
+    const MERCHANT_ID = 0;
 
     const API_KEY = "PUT_YOUR_API_KEY_HERE";
     const SERVER_URL = "api-sandbox01.kountaccess.com";
@@ -191,6 +191,29 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($decisionJson['velocity']['ip_address'], $decisionInfo['velocity']['ip_address']);
         $this->assertEquals($decisionJson['velocity']['password'], $decisionInfo['velocity']['password']);
         $this->assertEquals($decisionJson['velocity']['user'], $decisionInfo['velocity']['user']);
+    }
+
+    public function testGetUniques()
+    {
+        $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(
+            array(self::MERCHANT_ID, self::API_KEY)
+        )->setMethods(['__call_endpoint'])->getMock();
+
+        $fakeDeviceId = 'FAKE_DEVICE_ID';
+        $fakeResponse = '{"response_id": "'.self::RESPONSE_ID.'", "uniques": [{"unique": "'.$fakeDeviceId.'", "datelastseen": "2018-05-01 23:59:59", "truststate": "trusted"} ] }';
+
+        $mock->expects($this->any())->method('__call_endpoint')->will($this->returnValue($fakeResponse));
+
+        $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION, $mock);
+
+        $uniqueInfo = $kount_access->getUniques($fakeDeviceId);
+        $this->assertNotNull($uniqueInfo);
+
+        $uniqueInfoDecoded = json_decode($uniqueInfo, true);
+        $this->logger->debug($uniqueInfoDecoded);
+
+        $this->assertEquals(self::RESPONSE_ID, $uniqueInfoDecoded['response_id']);
+        $this->assertEquals($fakeDeviceId, $uniqueInfoDecoded['uniques'][0]['unique']);
     }
 
 }

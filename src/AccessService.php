@@ -211,7 +211,29 @@ class AccessService
         }
     }
 
+    /**
+     * retrieves devices based on unique identifier passed by the user
+     * @param $unique
+     * @return mixed
+     */
+    public function getDevices($unique)
+    {
 
+        $data     = array(
+            "uniq" => $unique,
+            "v"    => $this->version,
+        );
+        $endpoint = "https://$this->server_name/api/getdevices?".http_build_query($data);
+        $this->logger->debug("getdevices endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "GET");
+    }
+
+    /**
+     * retrieves uniques for a device id passed by the user
+     * @param $device_id
+     * @return mixed
+     */
     public function getUniques($device_id)
     {
 

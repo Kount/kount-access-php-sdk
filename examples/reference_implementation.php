@@ -125,6 +125,23 @@ try {
     var_dump($e->getMessage());
 }
 
+///////////////////////////////////////////////////////////////////////////
+//If you need to get devices based on unique identifiers
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->getDevices('$user')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
+    // Call desired method
+    $response = $kountAccess->getDevices($user);
+    // Do something with the response
+    evaluateResponse($response);
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -133,7 +150,7 @@ try {
 try {
     echo "Example for calling Kount\AccessService->getUniques('$session_id')\n";
     // Create an instance of the service
-    $kountAccess = new AccessService($merchant_id, $api_key, $server);
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
     $response = $kountAccess->getUniques('DEVICE_ID');
     // Do something with the response

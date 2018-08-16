@@ -193,6 +193,29 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($decisionJson['velocity']['user'], $decisionInfo['velocity']['user']);
     }
 
+    public function testGetDevices()
+    {
+        $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(
+            array(self::MERCHANT_ID, self::API_KEY)
+        )->setMethods(['__call_endpoint'])->getMock();
+
+        $fakeDeviceId = 'FAKE_DEVICE_ID';
+        $fakeResponse = '{"response_id": "'.self::RESPONSE_ID.'", "devices": [{"deviceid": "'.$fakeDeviceId.'", "truststate": "TRUSTED", "datefirstseen": "date and time", "friendlyname": null } ] }';
+
+        $mock->expects($this->any())->method('__call_endpoint')->will($this->returnValue($fakeResponse));
+
+        $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION, $mock);
+
+        $deviceInfo = $kount_access->getDevices(self::SESSION_ID);
+        $this->assertNotNull($deviceInfo);
+
+        $deviceInfoDecoded = json_decode($deviceInfo, true);
+        $this->logger->debug($deviceInfoDecoded);
+
+        $this->assertEquals(self::RESPONSE_ID, $deviceInfoDecoded['response_id']);
+        $this->assertEquals($fakeDeviceId, $deviceInfoDecoded['devices'][0]['deviceid']);
+    }
+
     public function testGetUniques()
     {
         $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(

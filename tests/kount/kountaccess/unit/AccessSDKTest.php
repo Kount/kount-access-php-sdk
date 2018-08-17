@@ -10,7 +10,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
 {
 
     const VERSION = "0400";
-    const MERCHANT_ID = 0;
+    const MERCHANT_ID = 123456;
 
     const API_KEY = "PUT_YOUR_API_KEY_HERE";
     const SERVER_URL = "api-sandbox01.kountaccess.com";

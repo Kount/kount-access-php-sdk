@@ -321,7 +321,7 @@ class AccessService
             "timing" => time(),
         );
 
-        $endpoint = "https://".$this->server_name."/behavio/data";
+        $endpoint = "https://".$this->server_name."/api/devicetrustbysession";
         $this->logger->debug("data endpoint: ".$endpoint);
 
         return $this->curl_service->__call_endpoint($endpoint, "POST", $data);

@@ -191,7 +191,7 @@ try {
     echo "Example for calling Kount\AccessService->getInfo('$session_id')\n";
     // Create an instance of the service
     //!note - the server called for this method is different
-    $kountAccess = new AccessService($merchant_id, $api_key, $behavioServer, '0400');
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
     $response = $kountAccess->deviceTrustBySession($session_id, $user, 'trusted');
 } catch (\Exception $e) {

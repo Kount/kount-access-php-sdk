@@ -188,12 +188,26 @@ try {
 // Set a trusted state status for a device based on the session
 ///////////////////////////////////////////////////////////////////////////
 try {
-    echo "Example for calling Kount\AccessService->getInfo('$session_id')\n";
+    echo "Example for calling Kount\AccessService->deviceTrustBySession('$session_id')\n";
     // Create an instance of the service
-    //!note - the server called for this method is different
     $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
     $response = $kountAccess->deviceTrustBySession($session_id, $user, 'trusted');
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Set a trusted state status for a device based on the session
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->deviceTrustByDevice('$session_id')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
+    // Call desired method
+    $response = $kountAccess->deviceTrustByDevice('DEVICE_ID', $user, 'trusted');
 } catch (\Exception $e) {
     //do something with the exception
     echo "Caught Exception:";

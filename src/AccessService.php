@@ -328,6 +328,32 @@ class AccessService
     }
 
     /**
+     * set a trust state for a device based on device_id
+     * @param $session_id
+     * @param $unique
+     * @param $state
+     * @return mixed
+     */
+    public function deviceTrustByDevice($device_id, $unique, $state)
+    {
+        $this->checkState($state);
+
+        $data     = array(
+            "v"      => $this->version,
+            "d"      => $device_id,
+            "uniq"   => $unique,
+            "ts"     => $state,
+            "m"      => $this->merchant_id,
+            "timing" => time(),
+        );
+
+        $endpoint = "https://".$this->server_name."/api/devicetrustbydevice";
+        $this->logger->debug("data endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    }
+
+    /**
      * @param $session_id
      * @param null $unique
      * @param null $user_id

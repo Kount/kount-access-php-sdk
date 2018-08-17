@@ -319,4 +319,17 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testDeviceTrustByDeviceShouldAcceptOnlyValidStates()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $fakeDeviceId = 'FAKE_DEVICE_ID';
+            $kount_access->deviceTrustByDevice($fakeDeviceId, self::USER, 'INVALID_STATE');
+
+            $this->fail('Should have thrown KountAccessException for an invalid passed state ');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
 }

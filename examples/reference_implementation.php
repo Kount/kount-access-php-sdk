@@ -30,6 +30,7 @@ $api_key     = 'PUT_YOUR_API_KEY_HERE';
 // Kount Access API server to use
 ///////////////////////////////////////////////////////////////////////////
 $server = 'api-sandbox01.kountaccess.com';
+$behavioServer = "api.behavio.kaptcha.com/sandbox/";
 
 ///////////////////////////////////////////////////////////////////////////
 // Sample Data Section (update with data used in your testing)
@@ -177,6 +178,22 @@ try {
     $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
     $response = $kountAccess->withDeviceInfo()->withVelocity()->withDecision()->withTrustedDeviceInfo()->withBehavioSec()->getInfo($session_id, $user, $user, $password);
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// Set a trusted state status for a device based on the session
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->getInfo('$session_id')\n";
+    // Create an instance of the service
+    //!note - the server called for this method is different
+    $kountAccess = new AccessService($merchant_id, $api_key, $behavioServer, '0400');
+    // Call desired method
+    $response = $kountAccess->deviceTrustBySession($session_id, $user, 'trusted');
 } catch (\Exception $e) {
     //do something with the exception
     echo "Caught Exception:";

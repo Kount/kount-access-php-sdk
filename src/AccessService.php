@@ -71,7 +71,9 @@ class AccessService
     private $behavio_sec_info_value = 16;
 
 
-
+    /**
+     * @var int
+     */
     private $merchant_id;
 
     /**
@@ -83,6 +85,16 @@ class AccessService
         'uh'   => [1, 8, 9, 16, 17, 24, 25], //uh = username hash
         'ph'   => [1, 8, 9, 16, 17, 24, 25], //ph = password hash
         'ah'   => [1, 8, 9, 16, 17, 24, 25], //ah = account hash
+    ];
+
+    /**
+     * permitted string states for deviceTrustBySession
+     * @var array
+     */
+    private $trusted_states = [
+        "trusted",
+        "not_trusted",
+        "banned"
     ];
 
     /**
@@ -290,6 +302,32 @@ class AccessService
     }
 
     /**
+     * set a trust state for a device based on session
+     * @param $session_id
+     * @param $unique
+     * @param $state
+     * @return mixed
+     */
+    public function deviceTrustBySession($session_id, $unique, $state)
+    {
+        $this->checkState($state);
+
+        $data     = array(
+            "v"      => $this->version,
+            "s"      => $session_id,
+            "uniq"   => $unique,
+            "ts"     => $state,
+            "m"      => $this->merchant_id,
+            "timing" => time(),
+        );
+
+        $endpoint = "https://".$this->server_name."/behavio/data";
+        $this->logger->debug("data endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    }
+
+    /**
      * @param $session_id
      * @param null $unique
      * @param null $user_id
@@ -443,6 +481,14 @@ class AccessService
         return $this;
     }
 
+    private function checkState($state)
+    {
+        if (!in_array($state, $this->trusted_states)) {
+            throw new AccessException(
+                AccessException::INVALID_DATA, 'The posted state must be one of: not_trusted, trusted, banned'
+            );
+        }
+    }
 
 } //end kount_access_api
 

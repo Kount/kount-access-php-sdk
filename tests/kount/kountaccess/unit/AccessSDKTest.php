@@ -10,7 +10,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
 {
 
     const VERSION = "0400";
-    const MERCHANT_ID = 0;
+    const MERCHANT_ID = 666999;
 
     const API_KEY = "PUT_YOUR_API_KEY_HERE";
     const SERVER_URL = "api-sandbox01.kountaccess.com";
@@ -237,6 +237,73 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(self::RESPONSE_ID, $uniqueInfoDecoded['response_id']);
         $this->assertEquals($fakeDeviceId, $uniqueInfoDecoded['uniques'][0]['unique']);
+    }
+
+    public function testCheckRequiredInfoThrowsAnExceptionOnNoRequiredResponseCalledBeforehand()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $kount_access->checkRequiredInfo();
+            $this->fail(
+                'Should have thrown KountAccessException for not called require_object() before invoking the method.'
+            );
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testCheckRequiredThrowsAnExceptionOnMissingUnique()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $kount_access->withDeviceInfo();
+            $kount_access->withTrustedDeviceInfo();
+
+            $kount_access->checkRequiredInfo();
+
+            $this->fail('Should have thrown KountAccessException for required param - unique.');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testCheckRequiredThrowsAnExceptionOnMissingUserPassword()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $kount_access->withDeviceInfo();
+            $kount_access->withTrustedDeviceInfo();
+            $kount_access->withVelocity();
+            $kount_access->withBehavioSec();
+
+            $kount_access->checkRequiredInfo('FakeUniqueParam');
+
+            $this->fail('Should have thrown KountAccessException for required param - username and password.');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+
+    public function testGetInfoReturnesDeviceInfoResponse()
+    {
+        $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(
+            array(self::MERCHANT_ID, self::API_KEY)
+        )->setMethods(['__call_endpoint'])->getMock();
+
+        $mock->expects($this->any())->method('__call_endpoint')->will($this->returnValue($this->device_info_json));
+
+        $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION, $mock);
+
+        $apiResponse = $kount_access->withDeviceInfo()->getInfo(self::SESSION_ID);
+        $this->assertNotNull($apiResponse);
+        $this->assertJson($apiResponse);
+
+        $deviceInfoDecoded = json_decode($apiResponse);
+        $this->logger->debug($deviceInfoDecoded);
+
+        $this->assertObjectHasAttribute('response_id', $deviceInfoDecoded);
+        $this->assertObjectHasAttribute('device', $deviceInfoDecoded);
     }
 
 }

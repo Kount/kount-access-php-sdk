@@ -4,7 +4,7 @@
   "keywords": ["kount", "access", "api", "php"],
   "homepage": "https://github.com/Kount/kount-access-php-sdk",
   "type" : "Library",
-  "license": "Custom",
+  "license": "ISC",
   "authors": [{
     "name": "Kount",
     "email": "support@kount.com"

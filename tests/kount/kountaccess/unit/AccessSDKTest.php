@@ -24,6 +24,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
     const DECISION = "A";
 
     private $host;
+    private $behavio_host;
     private $session_url;
     private $access_url;
     private $device_json;
@@ -39,6 +40,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         $this->host             = self::MERCHANT_ID.".kountaccess.com";
         $this->session_url      = "https://".$this->host."/api/session=".self::SESSION_ID;
         $this->access_url       = "https://".$this->host."/access";
+        $this->behavio_host       = "https://api.behavio.kaptcha.com/sandbox/";
         $this->device_json      = '{"device": {"id": "'.self::FINGERPRINT.'", "ipAddress": "'.self::IP_ADDRESS.'", "ipGeo": "'.self::IP_GEO.'", "mobile": 1, "proxy": 0 }, "response_id": "'.self::RESPONSE_ID.'"}';
         $this->velocity_json    = '{"device": {"id": "'.self::FINGERPRINT.'", "ipAddress": "'.self::IP_ADDRESS.'", "ipGeo": "'.self::IP_GEO.'", "mobile": 1, "proxy": 0 }, "response_id": "'.self::RESPONSE_ID.'", "velocity": {"account": {"dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "device": {"alh": 1, "alm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "ip_address": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "password": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "ulh": 1, "ulm": 1 }, "user": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1 }}}';
         $this->decision_json    = '{"decision": {"errors": [], "reply": {"ruleEvents": {"decision": "'.self::DECISION.'", "ruleEvents": [], "total": 0 } }, "warnings": [] }, "device": {"id": "'.self::FINGERPRINT.'", "ipAddress": "'.self::IP_ADDRESS.'", "ipGeo": "'.self::IP_GEO.'", "mobile": 1, "proxy": 0 }, "response_id": "'.self::RESPONSE_ID.'", "velocity": {"account": {"dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "device": {"alh": 1, "alm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "ip_address": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "password": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "ulh": 1, "ulm": 1 }, "user": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1 }}}';
@@ -332,4 +334,29 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testBehavioSecDataEndpointIsValidated()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $fakeDeviceId = 'FAKE_DEVICE_ID';
+            $kount_access->behaviosecData($fakeDeviceId, self::USER, '{"test":"test"}');
+
+            $this->fail('Should have thrown KountAccessException for an invalid server passed');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testBehavioSecDataTimingIsValidated()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->behavio_host, self::VERSION);
+            $fakeDeviceId = 'FAKE_DEVICE_ID';
+            $kount_access->behaviosecData($fakeDeviceId, self::USER, 'INVALID JSON');
+            $this->fail('Should have thrown KountAccessException for an invalid timing parameter passed');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+    
 }

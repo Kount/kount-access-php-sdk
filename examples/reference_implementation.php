@@ -214,6 +214,22 @@ try {
     var_dump($e->getMessage());
 }
 
+//////////////////////////////////////////////////////////////////////////
+// use behavioSec Data
+// !! the server for this call is different
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->$this->behaviosecData('$session_id')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $behavioServer, '0400');
+    // Call desired method
+    $response = $kountAccess->behaviosecData('DEVICE_ID', $user, 'trusted');
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
 
 /**
  * Simple evaluator that either prints the errors, or the associative array

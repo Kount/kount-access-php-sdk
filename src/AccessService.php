@@ -507,6 +507,40 @@ class AccessService
         return $this;
     }
 
+    /**
+     * retrieves behaviosec data from
+     * @param $session_id
+     * @param $unique
+     * @return mixed
+     */
+    public function behaviosecData($session_id, $unique, $timing)
+    {
+        if(!preg_match('{api\.behavio\.kaptcha\.com}', $this->server_name))
+        {
+            throw new AccessException(
+                AccessException::INVALID_DATA, 'This method should be used with a different server: api.behavio.kaptcha.com'
+            );
+        }
+
+        if(!is_array(json_decode($timing, true)))
+        {
+            throw new AccessException(
+                AccessException::INVALID_DATA, 'The timing parameter should be a valid json field'
+            );
+        }
+
+        $data     = array(
+            "m"    => $this->merchant_id,
+            "s"    => $session_id,
+            "timing" => $timing,
+            "uniq" => $unique,
+        );
+        $endpoint = "https://".$this->server_name."/behavio/data";
+        $this->logger->debug("behavioSec endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    }
+
     private function checkState($state)
     {
         if (!in_array($state, $this->trusted_states)) {

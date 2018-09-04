@@ -192,7 +192,8 @@ try {
     // Create an instance of the service
     $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
-    $response = $kountAccess->deviceTrustBySession($session_id, $user, 'trusted');
+    $timingJson = '{"valid":"json", "response":"with", "timing":"data"}';
+    $response = $kountAccess->deviceTrustBySession($session_id, $user, 'trusted', $timingJson);
 } catch (\Exception $e) {
     //do something with the exception
     echo "Caught Exception:";

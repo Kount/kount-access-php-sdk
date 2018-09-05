@@ -34,5 +34,6 @@ Kount Access API Versions:
 
 * 0200
 * 0210 (default)
+* 0400
 
 For more information on using this library, consult the wiki section.

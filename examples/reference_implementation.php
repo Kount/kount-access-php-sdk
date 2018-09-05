@@ -161,6 +161,73 @@ try {
     var_dump($e->getMessage());
 }
 
+///////////////////////////////////////////////////////////////////////////
+//getInfo() for a device
+//this method can have several different answers based on the methods called beforehand
+// at least 1 method of the listed below is required before making the getInfo() call
+// withDeviceInfo() - returns information about the device
+// withVelocity() - returns information about velocity
+// withDecision() - returns information about decision
+// withTrystedDeviceInfo() - returns information about device trust state
+// withBehavioSec() - returns information about behavio sec
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->getInfo('$session_id')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
+    // Call desired method
+    $response = $kountAccess->withDeviceInfo()->withVelocity()->withDecision()->withTrustedDeviceInfo()->withBehavioSec()->getInfo($session_id, $user, $user, $password);
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// Set a trusted state status for a device based on the session
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->deviceTrustBySession('$session_id')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
+    // Call desired method
+    $response = $kountAccess->deviceTrustBySession($session_id, $user, 'trusted');
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Set a trusted state status for a device based on the session
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->deviceTrustByDevice('$session_id')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
+    // Call desired method
+    $response = $kountAccess->deviceTrustByDevice('DEVICE_ID', $user, 'trusted');
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
+//////////////////////////////////////////////////////////////////////////
+// use behavioSec Data
+///////////////////////////////////////////////////////////////////////////
+try {
+    echo "Example for calling Kount\AccessService->$this->behaviosecData('$session_id')\n";
+    // Create an instance of the service
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
+    // Call desired method
+    $response = $kountAccess->behaviosecData('DEVICE_ID', $user, 'trusted', "api.behavio.kaptcha.com/sandbox/");
+} catch (\Exception $e) {
+    //do something with the exception
+    echo "Caught Exception:";
+    var_dump($e->getMessage());
+}
+
 
 /**
  * Simple evaluator that either prints the errors, or the associative array

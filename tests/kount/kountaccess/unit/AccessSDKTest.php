@@ -10,7 +10,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
 {
 
     const VERSION = "0400";
-    const MERCHANT_ID = 0;
+    const MERCHANT_ID = 123456;
 
     const API_KEY = "PUT_YOUR_API_KEY_HERE";
     const SERVER_URL = "api-sandbox01.kountaccess.com";
@@ -24,6 +24,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
     const DECISION = "A";
 
     private $host;
+    private $behavio_host;
     private $session_url;
     private $access_url;
     private $device_json;
@@ -39,6 +40,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         $this->host             = self::MERCHANT_ID.".kountaccess.com";
         $this->session_url      = "https://".$this->host."/api/session=".self::SESSION_ID;
         $this->access_url       = "https://".$this->host."/access";
+        $this->behavio_host       = "https://api.behavio.kaptcha.com/sandbox/";
         $this->device_json      = '{"device": {"id": "'.self::FINGERPRINT.'", "ipAddress": "'.self::IP_ADDRESS.'", "ipGeo": "'.self::IP_GEO.'", "mobile": 1, "proxy": 0 }, "response_id": "'.self::RESPONSE_ID.'"}';
         $this->velocity_json    = '{"device": {"id": "'.self::FINGERPRINT.'", "ipAddress": "'.self::IP_ADDRESS.'", "ipGeo": "'.self::IP_GEO.'", "mobile": 1, "proxy": 0 }, "response_id": "'.self::RESPONSE_ID.'", "velocity": {"account": {"dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "device": {"alh": 1, "alm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "ip_address": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "password": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "ulh": 1, "ulm": 1 }, "user": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1 }}}';
         $this->decision_json    = '{"decision": {"errors": [], "reply": {"ruleEvents": {"decision": "'.self::DECISION.'", "ruleEvents": [], "total": 0 } }, "warnings": [] }, "device": {"id": "'.self::FINGERPRINT.'", "ipAddress": "'.self::IP_ADDRESS.'", "ipGeo": "'.self::IP_GEO.'", "mobile": 1, "proxy": 0 }, "response_id": "'.self::RESPONSE_ID.'", "velocity": {"account": {"dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "device": {"alh": 1, "alm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "ip_address": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "plh": 1, "plm": 1, "ulh": 1, "ulm": 1 }, "password": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "ulh": 1, "ulm": 1 }, "user": {"alh": 1, "alm": 1, "dlh": 1, "dlm": 1, "iplh": 1, "iplm": 1, "plh": 1, "plm": 1 }}}';
@@ -237,6 +239,146 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(self::RESPONSE_ID, $uniqueInfoDecoded['response_id']);
         $this->assertEquals($fakeDeviceId, $uniqueInfoDecoded['uniques'][0]['unique']);
+    }
+
+    public function testCheckRequiredInfoThrowsAnExceptionOnNoRequiredResponseCalledBeforehand()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $kount_access->checkRequiredInfo();
+            $this->fail(
+                'Should have thrown KountAccessException for not called require_object() before invoking the method.'
+            );
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testCheckRequiredThrowsAnExceptionOnMissingUnique()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $kount_access->withDeviceInfo();
+            $kount_access->withTrustedDeviceInfo();
+
+            $kount_access->checkRequiredInfo();
+
+            $this->fail('Should have thrown KountAccessException for required param - unique.');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testCheckRequiredThrowsAnExceptionOnMissingUserPassword()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $kount_access->withDeviceInfo();
+            $kount_access->withTrustedDeviceInfo();
+            $kount_access->withVelocity();
+            $kount_access->withBehavioSec();
+
+            $kount_access->checkRequiredInfo('FakeUniqueParam');
+
+            $this->fail('Should have thrown KountAccessException for required param - username and password.');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+
+    public function testGetInfoReturnesDeviceInfoResponse()
+    {
+        $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(
+            array(self::MERCHANT_ID, self::API_KEY)
+        )->setMethods(['__call_endpoint'])->getMock();
+
+        $mock->expects($this->any())->method('__call_endpoint')->will($this->returnValue($this->device_info_json));
+
+        $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION, $mock);
+
+        $apiResponse = $kount_access->withDeviceInfo()->getInfo(self::SESSION_ID);
+        $this->assertNotNull($apiResponse);
+        $this->assertJson($apiResponse);
+
+        $deviceInfoDecoded = json_decode($apiResponse);
+        $this->logger->debug($deviceInfoDecoded);
+
+        $this->assertObjectHasAttribute('response_id', $deviceInfoDecoded);
+        $this->assertObjectHasAttribute('device', $deviceInfoDecoded);
+    }
+
+
+    public function testDeviceTrustBySessionShouldAcceptOnlyValidStates()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+
+            $kount_access->deviceTrustBySession(self::SESSION_ID, self::USER, 'INVALID_STATE');
+
+            $this->fail('Should have thrown KountAccessException for an invalid passed state ');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testDeviceTrustByDeviceShouldAcceptOnlyValidStates()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $fakeDeviceId = 'FAKE_DEVICE_ID';
+            $kount_access->deviceTrustByDevice($fakeDeviceId, self::USER, 'INVALID_STATE');
+
+            $this->fail('Should have thrown KountAccessException for an invalid passed state ');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testBehavioSecDataEndpointIsValidated()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $fakeDeviceId = 'FAKE_DEVICE_ID';
+            $kount_access->behaviosecData($fakeDeviceId, self::USER, '{"test":"test"}', "INVALID_HOST_FOR_BEHAVIO");
+
+            $this->fail('Should have thrown KountAccessException for an invalid server passed');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testBehavioSecDataTimingIsValidated()
+    {
+        try {
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
+            $fakeDeviceId = 'FAKE_DEVICE_ID';
+            $kount_access->behaviosecData($fakeDeviceId, self::USER, 'INVALID JSON', $this->behavio_host);
+            $this->fail('Should have thrown KountAccessException for an invalid timing parameter passed');
+        } catch (AccessException $e) {
+            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
+        }
+    }
+
+    public function testBehavioSecDataUrlPassedIsStripped()
+    {
+        $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(
+            array(self::MERCHANT_ID, self::API_KEY)
+        )->setMethods(['__call_endpoint'])->getMock();
+
+        $fakePreparedData = [
+            'm' => self::MERCHANT_ID,
+            's' => 'FAKE_SESSION_ID',
+            'timing' => '{"valid":"json"}',
+            'uniq' => self::USER,
+
+        ];
+        $formattedBehavioUrl =  $this->behavio_host."behavio/data";
+        $mock->expects($this->any())->method('__call_endpoint')->with($formattedBehavioUrl, "POST", $fakePreparedData);
+
+        $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION, $mock);
+        $kount_access->behaviosecData('FAKE_SESSION_ID', self::USER, '{"valid":"json"}', $this->behavio_host);
+
     }
 
 }

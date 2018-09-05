@@ -40,8 +40,62 @@ class AccessService
      */
     private $logger;
 
+    /**
+     * The i value total - based on requested data
+     */
+    private $info_value = 0;
+
+    /**
+     * @var int device request index
+     */
+    private $device_info_value = 1;
+
+    /**
+     * @var int velocity request index
+     */
+    private $velocity_info_value = 2;
+
+    /**
+     * @var int decisionrequest index
+     */
+    private $decision_info_value = 4;
+
+    /**
+     * @var int tdi request index
+     */
+    private $trusted_device_info_value = 8;
+
+    /**
+     * @var int behaviosec request index
+     */
+    private $behavio_sec_info_value = 16;
+
+
+    /**
+     * @var int
+     */
     private $merchant_id;
 
+    /**
+     * @var array - definition of not required values for total info sums for the getInfo request
+     * all those params are required at some point based on the requested response
+     */
+    private $not_required_for_info_values = [
+        'uniq' => [1, 2, 3, 4, 5, 6, 7, 8], //uniq = unique
+        'uh'   => [1, 8, 9, 16, 17, 24, 25], //uh = username hash
+        'ph'   => [1, 8, 9, 16, 17, 24, 25], //ph = password hash
+        'ah'   => [1, 8, 9, 16, 17, 24, 25], //ah = account hash
+    ];
+
+    /**
+     * permitted string states for deviceTrustBySession
+     * @var array
+     */
+    private $trusted_states = [
+        "trusted",
+        "not_trusted",
+        "banned"
+    ];
 
     /**
      * Constructor
@@ -245,6 +299,257 @@ class AccessService
         $this->logger->debug("getuniques endpoint: ".$endpoint);
 
         return $this->curl_service->__call_endpoint($endpoint, "GET");
+    }
+
+    /**
+     * set a trust state for a device based on session
+     * @param $session_id
+     * @param $unique
+     * @param $state
+     * @return mixed
+     * @throws AccessException
+     */
+    public function deviceTrustBySession($session_id, $unique, $state)
+    {
+        $this->checkState($state);
+
+        $data     = array(
+            "v"      => $this->version,
+            "s"      => $session_id,
+            "uniq"   => $unique,
+            "ts"     => $state,
+        );
+
+        $endpoint = "https://".$this->server_name."/api/devicetrustbysession";
+        $this->logger->debug("data endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    }
+
+    /**
+     * set a trust state for a device based on device_id
+     * @param $session_id
+     * @param $unique
+     * @param $state
+     * @return mixed
+     */
+    public function deviceTrustByDevice($device_id, $unique, $state)
+    {
+        $this->checkState($state);
+
+        $data     = array(
+            "v"      => $this->version,
+            "d"      => $device_id,
+            "uniq"   => $unique,
+            "ts"     => $state,
+        );
+
+        $endpoint = "https://".$this->server_name."/api/devicetrustbydevice";
+        $this->logger->debug("data endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    }
+
+    /**
+     * @param $session_id
+     * @param null $unique
+     * @param null $user_id
+     * @param null $password
+     * @return mixed
+     * @throws AccessException
+     */
+    public function getInfo($session_id, $unique = null, $user_id = null, $password = null)
+    {
+        $this->verifySession($session_id);
+        $this->checkRequiredInfo($unique, $user_id, $password);
+
+        $endpoint = "https://$this->server_name/api/info";
+        $this->logger->debug("info endpoint: ".$endpoint);
+
+        $u = hash('sha256', $user_id);
+        $p = hash('sha256', $password);
+        $a = hash('sha256', $user_id.":".$password);
+
+        $data = $this->buildInfoRequestParams($session_id, $unique, $user_id, $password);
+
+        $this->logger->debug(
+            "info request parameters : "."user_id = ".$u.', '."password = ".$p.', '."credentials = ".$a.', '."session_id = ".$session_id.', '."version = ".$this->version
+        );
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    } //end getInfo
+
+    /**
+     * @param $session_id
+     * @param null $unique
+     * @param null $user_id
+     * @param null $password
+     * @return array
+     */
+    private function buildInfoRequestParams($session_id, $unique = null, $user_id = null, $password = null)
+    {
+        $data = array(
+            "s" => $session_id,
+            "v" => $this->version,
+            "i" => $this->info_value,
+        );
+
+        if (!in_array($this->info_value, $this->not_required_for_info_values['uniq'])) {
+            $data['uniq'] = $unique;
+        }
+
+        if (!in_array($this->info_value, $this->not_required_for_info_values['uh'])) {
+            $u = hash('sha256', $user_id);
+            $p = hash('sha256', $password);
+            $a = hash('sha256', $user_id.":".$password);
+
+            $data['uh'] = $u;
+            $data['ph'] = $p;
+            $data['ah'] = $a;
+        }
+
+        return $data;
+    }
+
+    /**
+     * checks the required params for the getInfo method based on the $info_value
+     * @param null $unique
+     * @param null $user_id
+     * @param null $password
+     * @throws AccessException
+     */
+    public function checkRequiredInfo($unique = null, $user_id = null, $password = null)
+    {
+        if ($this->info_value == 0) {
+            throw new AccessException(
+                AccessException::INVALID_DATA, ' A response type should be requested before calling getInfo().'
+            );
+        }
+
+        if (is_null($unique) && !in_array($this->info_value, $this->not_required_for_info_values['uniq'])) {
+            throw new AccessException(
+                AccessException::INVALID_DATA,
+                ' Param $unique is required for getInfo() when requesting this type of response.'
+            );
+        }
+
+        if ((is_null($user_id) || is_null($password)) && !in_array(
+                $this->info_value,
+                $this->not_required_for_info_values['uh']
+            )) {
+            throw new AccessException(
+                AccessException::INVALID_DATA,
+                ' Param $user_id аnd $password is required for getInfo() when requesting this type of response.'
+            );
+        }
+    }
+
+    /**
+     * Setter for the device info in the response of getInfo
+     * @return $this
+     */
+    public function withDeviceInfo()
+    {
+        $this->info_value        += $this->device_info_value;
+        $this->device_info_value = 0;
+
+        return $this;
+    }
+
+    /**
+     * Setter for the velocity info in the response of getInfo
+     * @return $this
+     */
+    public function withVelocity()
+    {
+        $this->info_value          += $this->velocity_info_value;
+        $this->velocity_info_value = 0;
+
+        return $this;
+    }
+
+    /**
+     * Setter for the decision info in the response of getInfo
+     * @return $this
+     */
+    public function withDecision()
+    {
+        $this->info_value          += $this->decision_info_value;
+        $this->decision_info_value = 0;
+
+        return $this;
+    }
+
+    /**
+     * Setter for the decision info in the response of getInfo
+     * @return $this
+     */
+    public function withTrustedDeviceInfo()
+    {
+        $this->info_value                += $this->trusted_device_info_value;
+        $this->trusted_device_info_value = 0;
+
+        return $this;
+    }
+
+    /**
+     * Setter for the behavio sec info in the response of get_info
+     * @return $this
+     */
+    public function withBehavioSec()
+    {
+        $this->info_value             += $this->behavio_sec_info_value;
+        $this->behavio_sec_info_value = 0;
+
+        return $this;
+    }
+
+    /**
+     * retrieves behaviosec data from
+     * @param $session_id
+     * @param $unique
+     * @param $timing
+     * @param $behavioServer
+     * @return mixed
+     * @throws AccessException
+     */
+    public function behaviosecData($session_id, $unique, $timing, $behavioServer)
+    {
+        $behavioServer = rtrim(preg_replace('{^(http:\/\/|https:\/\/)}', '', $behavioServer), '/');
+
+        if(!preg_match('{api\.behavio\.kaptcha\.com}', $behavioServer))
+        {
+            throw new AccessException(
+                AccessException::INVALID_DATA, 'This method should be used with a different server: api.behavio.kaptcha.com'
+            );
+        }
+
+        if(!is_array(json_decode($timing, true)))
+        {
+            throw new AccessException(
+                AccessException::INVALID_DATA, 'The timing parameter should be a valid json field'
+            );
+        }
+
+        $data     = array(
+            "m"    => $this->merchant_id,
+            "s"    => $session_id,
+            "timing" => $timing,
+            "uniq" => $unique,
+        );
+        $endpoint = "https://".$behavioServer."/behavio/data";
+        $this->logger->debug("behavioSec endpoint: ".$endpoint);
+
+        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
+    }
+
+    private function checkState($state)
+    {
+        if (!in_array($state, $this->trusted_states)) {
+            throw new AccessException(
+                AccessException::INVALID_DATA, 'The posted state must be one of: not_trusted, trusted, banned'
+            );
+        }
     }
 
 } //end kount_access_api

@@ -308,26 +308,13 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         $this->assertObjectHasAttribute('device', $deviceInfoDecoded);
     }
 
-    public function testDeviceTrustBySessionTimingParamShouldBeVerified()
-    {
-        try {
-            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
-
-            $valid_state = "trusted";
-            $kount_access->deviceTrustBySession(self::SESSION_ID, self::USER, $valid_state, 'INVALID_JSON');
-
-            $this->fail('Should have thrown KountAccessException for an invalid timing parameter');
-        } catch (AccessException $e) {
-            $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
-        }
-    }
 
     public function testDeviceTrustBySessionShouldAcceptOnlyValidStates()
     {
         try {
             $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
 
-            $kount_access->deviceTrustBySession(self::SESSION_ID, self::USER, 'INVALID_STATE', '{"valid":"json"}');
+            $kount_access->deviceTrustBySession(self::SESSION_ID, self::USER, 'INVALID_STATE');
 
             $this->fail('Should have thrown KountAccessException for an invalid passed state ');
         } catch (AccessException $e) {

@@ -306,29 +306,18 @@ class AccessService
      * @param $session_id
      * @param $unique
      * @param $state
-     * @param $timing
      * @return mixed
      * @throws AccessException
      */
-    public function deviceTrustBySession($session_id, $unique, $state, $timing)
+    public function deviceTrustBySession($session_id, $unique, $state)
     {
         $this->checkState($state);
-
-        if(!is_array(json_decode($timing, true)))
-        {
-            throw new AccessException(
-                AccessException::INVALID_DATA,
-                ' Param $timing should be a valid json.'
-            );
-        }
 
         $data     = array(
             "v"      => $this->version,
             "s"      => $session_id,
             "uniq"   => $unique,
             "ts"     => $state,
-            "m"      => $this->merchant_id,
-            "timing" => $timing,
         );
 
         $endpoint = "https://".$this->server_name."/api/devicetrustbysession";
@@ -353,8 +342,6 @@ class AccessService
             "d"      => $device_id,
             "uniq"   => $unique,
             "ts"     => $state,
-            "m"      => $this->merchant_id,
-            "timing" => time(),
         );
 
         $endpoint = "https://".$this->server_name."/api/devicetrustbydevice";

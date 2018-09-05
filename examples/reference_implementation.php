@@ -30,7 +30,6 @@ $api_key     = 'PUT_YOUR_API_KEY_HERE';
 // Kount Access API server to use
 ///////////////////////////////////////////////////////////////////////////
 $server = 'api-sandbox01.kountaccess.com';
-$behavioServer = "api.behavio.kaptcha.com/sandbox/";
 
 ///////////////////////////////////////////////////////////////////////////
 // Sample Data Section (update with data used in your testing)
@@ -217,14 +216,13 @@ try {
 
 //////////////////////////////////////////////////////////////////////////
 // use behavioSec Data
-// !! the server for this call is different
 ///////////////////////////////////////////////////////////////////////////
 try {
     echo "Example for calling Kount\AccessService->$this->behaviosecData('$session_id')\n";
     // Create an instance of the service
-    $kountAccess = new AccessService($merchant_id, $api_key, $behavioServer, '0400');
+    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
-    $response = $kountAccess->behaviosecData('DEVICE_ID', $user, 'trusted');
+    $response = $kountAccess->behaviosecData('DEVICE_ID', $user, 'trusted', "api.behavio.kaptcha.com/sandbox/");
 } catch (\Exception $e) {
     //do something with the exception
     echo "Caught Exception:";

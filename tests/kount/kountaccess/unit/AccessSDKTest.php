@@ -353,7 +353,7 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
         try {
             $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
             $fakeDeviceId = 'FAKE_DEVICE_ID';
-            $kount_access->behaviosecData($fakeDeviceId, self::USER, '{"test":"test"}');
+            $kount_access->behaviosecData($fakeDeviceId, self::USER, '{"test":"test"}', "INVALID_HOST_FOR_BEHAVIO");
 
             $this->fail('Should have thrown KountAccessException for an invalid server passed');
         } catch (AccessException $e) {
@@ -364,13 +364,34 @@ class AccessSDKTest extends PHPUnit_Framework_TestCase
     public function testBehavioSecDataTimingIsValidated()
     {
         try {
-            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->behavio_host, self::VERSION);
+            $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION);
             $fakeDeviceId = 'FAKE_DEVICE_ID';
-            $kount_access->behaviosecData($fakeDeviceId, self::USER, 'INVALID JSON');
+            $kount_access->behaviosecData($fakeDeviceId, self::USER, 'INVALID JSON', $this->behavio_host);
             $this->fail('Should have thrown KountAccessException for an invalid timing parameter passed');
         } catch (AccessException $e) {
             $this->assertEquals(AccessException::INVALID_DATA, $e->getAccessErrorType());
         }
+    }
+
+    public function testBehavioSecDataUrlPassedIsStripped()
+    {
+        $mock = $this->getMockBuilder(AccessCurlService::class)->setConstructorArgs(
+            array(self::MERCHANT_ID, self::API_KEY)
+        )->setMethods(['__call_endpoint'])->getMock();
+
+        $fakePreparedData = [
+            'm' => self::MERCHANT_ID,
+            's' => 'FAKE_SESSION_ID',
+            'timing' => '{"valid":"json"}',
+            'uniq' => self::USER,
+
+        ];
+        $formattedBehavioUrl =  $this->behavio_host."behavio/data";
+        $mock->expects($this->any())->method('__call_endpoint')->with($formattedBehavioUrl, "POST", $fakePreparedData);
+
+        $kount_access = new AccessService(self::MERCHANT_ID, self::API_KEY, $this->host, self::VERSION, $mock);
+        $kount_access->behaviosecData('FAKE_SESSION_ID', self::USER, '{"valid":"json"}', $this->behavio_host);
+
     }
 
 }

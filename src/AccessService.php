@@ -521,11 +521,16 @@ class AccessService
      * retrieves behaviosec data from
      * @param $session_id
      * @param $unique
+     * @param $timing
+     * @param $behavioServer
      * @return mixed
+     * @throws AccessException
      */
-    public function behaviosecData($session_id, $unique, $timing)
+    public function behaviosecData($session_id, $unique, $timing, $behavioServer)
     {
-        if(!preg_match('{api\.behavio\.kaptcha\.com}', $this->server_name))
+        $behavioServer = rtrim(preg_replace('{^(http:\/\/|https:\/\/)}', '', $behavioServer), '/');
+
+        if(!preg_match('{api\.behavio\.kaptcha\.com}', $behavioServer))
         {
             throw new AccessException(
                 AccessException::INVALID_DATA, 'This method should be used with a different server: api.behavio.kaptcha.com'
@@ -545,7 +550,7 @@ class AccessService
             "timing" => $timing,
             "uniq" => $unique,
         );
-        $endpoint = "https://".$this->server_name."/behavio/data";
+        $endpoint = "https://".$behavioServer."/behavio/data";
         $this->logger->debug("behavioSec endpoint: ".$endpoint);
 
         return $this->curl_service->__call_endpoint($endpoint, "POST", $data);

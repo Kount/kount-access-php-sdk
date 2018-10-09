@@ -217,7 +217,7 @@ try {
 // use behavioSec Data
 ///////////////////////////////////////////////////////////////////////////
 try {
-    echo "Example for calling Kount\AccessService->$this->behaviosecData('$session_id')\n";
+    echo "Example for calling Kount\AccessService->behaviosecData('$session_id')\n";
     // Create an instance of the service
     $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method

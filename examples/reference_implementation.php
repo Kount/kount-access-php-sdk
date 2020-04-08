@@ -169,14 +169,13 @@ try {
 // withVelocity() - returns information about velocity
 // withDecision() - returns information about decision
 // withTrystedDeviceInfo() - returns information about device trust state
-// withBehavioSec() - returns information about behavio sec
 ///////////////////////////////////////////////////////////////////////////
 try {
     echo "Example for calling Kount\AccessService->getInfo('$session_id')\n";
     // Create an instance of the service
     $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
-    $response = $kountAccess->withDeviceInfo()->withVelocity()->withDecision()->withTrustedDeviceInfo()->withBehavioSec()->getInfo($session_id, $user, $user, $password);
+    $response = $kountAccess->withDeviceInfo()->withVelocity()->withDecision()->withTrustedDeviceInfo()->getInfo($session_id, $user, $user, $password);
 } catch (\Exception $e) {
     //do something with the exception
     echo "Caught Exception:";
@@ -207,21 +206,6 @@ try {
     $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
     // Call desired method
     $response = $kountAccess->deviceTrustByDevice('DEVICE_ID', $user, 'trusted');
-} catch (\Exception $e) {
-    //do something with the exception
-    echo "Caught Exception:";
-    var_dump($e->getMessage());
-}
-
-//////////////////////////////////////////////////////////////////////////
-// use behavioSec Data
-///////////////////////////////////////////////////////////////////////////
-try {
-    echo "Example for calling Kount\AccessService->behaviosecData('$session_id')\n";
-    // Create an instance of the service
-    $kountAccess = new AccessService($merchant_id, $api_key, $server, '0400');
-    // Call desired method
-    $response = $kountAccess->behaviosecData('DEVICE_ID', $user, 'trusted', "api.behavio.kaptcha.com/sandbox/");
 } catch (\Exception $e) {
     //do something with the exception
     echo "Caught Exception:";

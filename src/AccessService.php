@@ -65,11 +65,6 @@ class AccessService
      */
     private $trusted_device_info_value = 8;
 
-    /**
-     * @var int behaviosec request index
-     */
-    private $behavio_sec_info_value = 16;
-
 
     /**
      * @var int
@@ -490,57 +485,6 @@ class AccessService
         $this->trusted_device_info_value = 0;
 
         return $this;
-    }
-
-    /**
-     * Setter for the behavio sec info in the response of get_info
-     * @return $this
-     */
-    public function withBehavioSec()
-    {
-        $this->info_value             += $this->behavio_sec_info_value;
-        $this->behavio_sec_info_value = 0;
-
-        return $this;
-    }
-
-    /**
-     * retrieves behaviosec data from
-     * @param $session_id
-     * @param $unique
-     * @param $timing
-     * @param $behavioServer
-     * @return mixed
-     * @throws AccessException
-     */
-    public function behaviosecData($session_id, $unique, $timing, $behavioServer)
-    {
-        $behavioServer = rtrim(preg_replace('{^(http:\/\/|https:\/\/)}', '', $behavioServer), '/');
-
-        if(!preg_match('{api\.behavio\.kaptcha\.com}', $behavioServer))
-        {
-            throw new AccessException(
-                AccessException::INVALID_DATA, 'This method should be used with a different server: api.behavio.kaptcha.com'
-            );
-        }
-
-        if(!is_array(json_decode($timing, true)))
-        {
-            throw new AccessException(
-                AccessException::INVALID_DATA, 'The timing parameter should be a valid json field'
-            );
-        }
-
-        $data     = array(
-            "m"    => $this->merchant_id,
-            "s"    => $session_id,
-            "timing" => $timing,
-            "uniq" => $unique,
-        );
-        $endpoint = "https://".$behavioServer."/behavio/data";
-        $this->logger->debug("behavioSec endpoint: ".$endpoint);
-
-        return $this->curl_service->__call_endpoint($endpoint, "POST", $data);
     }
 
     private function checkState($state)

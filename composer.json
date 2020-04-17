@@ -3,22 +3,24 @@
   "description": "This library allows you to connect to the Kount Access API services and get information back from your login transactions.",
   "keywords": ["kount", "access", "api", "php"],
   "homepage": "https://github.com/Kount/kount-access-php-sdk",
-  "type" : "Library",
+  "type" : "library",
   "license": "ISC",
   "authors": [{
     "name": "Kount",
     "email": "support@kount.com"
   }],
   "require": {
-    "php": ">=5.5",
+    "php": ">=7.2.5",
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "ext-xml": "*"
+    "ext-xml": "*",
+    "phpunit/php-code-coverage": "^7.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "^4",
-    "apache/log4php": "2.3.0"
+    "phpunit/phpunit": "8.5.2",
+    "apache/log4php": "2.3.0",
+    "phpdocumentor/phpdocumentor": "2.*"
   },
   "autoload": {
     "classmap": [
